@@ -27,7 +27,6 @@ from lib.api import *
 from lib.kasar import *
 from lib.brainly import *
 #-----------setting----------------------#
-_Kasar=open('./assets/document/badword.txt').read().splitlines()
 tempChatBot={}
 wikipedia.set_lang('id')
 tra=Translator()
@@ -413,9 +412,9 @@ Tags :
 *#upimg* -> Upload Gambar Ke Img.bb
 *#cari* -> cari query wikipedia
 con : #cari hantu
-*#qrmaker* -> pembuat barcode
-con : #qrmaker Sebuah barcode
-*#qrreader* -> pembaca barcode
+*#qrmaker* -> pembuat qrcode
+con : #qrmaker Sebuah qrcode
+*#qrreader* -> pembaca qrcode
 *#?* -> pencari jawaban langsung dari brainly.co.id
 con : #? contoh soal matematika
 con : #? contoh soal matematika 2
