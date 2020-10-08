@@ -33,7 +33,7 @@ wikipedia.set_lang('id')
 tra=Translator()
 driver=WhatsAPIDriver(client='Chrome')
 FullCommand=["#help","#sticker","#stiker","#upimg","#cari","#support","#cara-penggunaan","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
-#kasar=open("assets/document/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
+#kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
 class GetRepMedia:
     def __init__(self, js):
@@ -95,19 +95,19 @@ def recImageReplyCommand(Msg, Chat):
             fn=Msg.save_media('./sticker',Msg.media_key)
             res=WhatAnimeIsThis(fn)
             if res["status"]:
-                open("%s.mp4"%ran,"wb").write(res["video"].content)
-                driver.send_media("%s.mp4"%ran, Msg.chat_id, res["hasil"])
-                os.remove("%s.mp4"%ran)
+                open("cache/%s.mp4"%ran,"wb").write(res["video"].content)
+                driver.send_media("cache/%s.mp4"%ran, Msg.chat_id, res["hasil"])
+                os.remove("cache/%s.mp4"%ran)
             else:
                 Msg.reply_message("Gagal di cari")
             os.remove(fn)
         elif kpt in ['#stiker','#sticker']:
             try:
-                fn=Msg.save_media('./sticker',Msg.media_key)
-                os.rename(fn,"%s.png"%ran)
-                pasteLayer("%s.png"%ran)
-                driver.send_image_as_sticker("%s.png"%ran,Msg.chat_id)
-                os.remove("%s.png"%ran)
+                fn=Msg.save_media('./cache',Msg.media_key)
+                os.rename(fn,"cache/%s.png"%ran)
+                pasteLayer("cache/%s.png"%ran)
+                driver.send_image_as_sticker("cache/%s.png"%ran,Msg.chat_id)
+                os.remove("cache/%s.png"%ran)
             except Exception as e:
                 False
         elif kpt == "#upimg":
@@ -144,15 +144,15 @@ def replyCommand(Msg, Chat):
         rep=GetRepMedia(Msg)
         if rep.type == "image":
             wri = driver.download_media(rep)
-            open("%s.jpg"%ran,"wb").write(wri.read())
-            res=WhatAnimeIsThis("%s.jpg"%ran)
+            open("cache/%s.jpg"%ran,"wb").write(wri.read())
+            res=WhatAnimeIsThis("cache/%s.jpg"%ran)
             if res["status"]:
-                open("%s.mp4"%ran,"wb").write(res["video"].content)
-                driver.send_media("%s.mp4"%ran, chat_id, res["hasil"])
-                os.remove("%s.mp4"%ran)
+                open("cache/%s.mp4"%ran,"wb").write(res["video"].content)
+                driver.send_media("cache/%s.mp4"%ran, chat_id, res["hasil"])
+                os.remove("cache/%s.mp4"%ran)
             else:
                 Msg.reply_message("Gagal di cari")
-            os.remove("%s.jpg"%ran)
+            os.remove("cache/%s.jpg"%ran)
     elif kpt == "#upimg":
         rep=GetRepMedia(Msg)
         if rep.type == "image":
@@ -341,14 +341,15 @@ Tags :
                 'tipe':arg[2]
             }).text)
             if hasil['status']:
-                open('quotes/result.jpg','wb').write(requests.get(hasil['result']).content)
-                driver.send_media('quotes/result.jpg',chat_id,'apakah kamu suka ? ')
+                open('cache/%sjpg'%ran,'wb').write(requests.get(hasil['result']).content)
+                driver.send_media('cache/%s.jpg'%ran,chat_id,'apakah kamu suka ? ')
+                os.remmove("%s.jpg"%ran)
             else:
                 Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
         except:
             Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
     elif kpt == '#cc':
-        cc=json.loads(open('assets/json/ISO-639-1-language.json').read())
+        cc=json.loads(open('lib/ISO-639-1-language.json').read())
         pesan=''
         for i in cc:
             pesan+='%s : %s\n'%(i['code'], i['name'])
@@ -408,7 +409,7 @@ Tags :
     elif hashlib.md5(kpt.encode()).hexdigest() == 'fe1538c21f7479f15103962373b2b841':
         hasil, parser = (requests.post('http://krypton.my.id/api.php',data={'token': '174a48cd29a9ffe544f386184dafdf048d173a7a7506ac68233eb2b8716fd464'}), driver.send_message_with_auto_preview)
         if hasil.status_code == 200:
-            parser(chat_id, base64.b64decode(hasil).decode().split("|")[0], base64.b64decode(hasil).decode().split("|")[1])
+            parser(chat_id, base64.b64decode(hasil.text).decode().split("|")[0], base64.b64decode(hasil.text).decode().split("|")[1])
     elif kpt == "#cara-penggunaan":
         Msg.reply_message('''*#help alat* -> menampilkan perintah alat
 *#sticker* -> pembuat sticker

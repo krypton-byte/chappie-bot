@@ -44,5 +44,3 @@ python3 main3.py
 |#list-admin   | List Admin Grup                                          |
 |#kick         | Kick Seseorang Drai Grup                                 |
 |#add          | Menambahkan Seseorang Dari Grup                          |
-
-<b> Untuk Support Jangan Di Ubah ya, support gue terus om</b>
