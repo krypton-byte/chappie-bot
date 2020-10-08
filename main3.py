@@ -461,6 +461,7 @@ atau anda bisa mengirim kartu kontak
 *#owner* -> menampilkan owner grup
 *#linkgroup* -> menampilkan tautan invite grup
 *#revoke* -> menarik tautan invite grup
+*#mentionall* -> menTag seluruh member grup
 *#help bot* -> menampilkan perintah bot
 *#* -> chat bot
 #con : # Hai
