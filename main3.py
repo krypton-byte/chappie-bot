@@ -2,7 +2,6 @@
 '''
  @AUTHOR : KRYPTON-BYTE
  @DATE   : THU OCT 8, 2020
- @NOTE   : Jangan Recode Ya Om Apalagi Link Donasi nya
 '''
 kasar=[]
 from os import remove, wait
