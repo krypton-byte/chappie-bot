@@ -2,7 +2,7 @@
 '''
  @AUTHOR : KRYPTON-BYTE
  @DATE   : THU OCT 8, 2020
- @NOTE   : Jangan Recode Ya Om
+ @NOTE   : Jangan Recode Ya Om Apalagi Link Donasi nya
 '''
 kasar=[]
 from os import remove, wait
@@ -10,7 +10,7 @@ from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
 from googletrans import Translator
-import time, base64, pytesseract, os,pickle, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
+import time, base64, pytesseract, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
 from gtts import gTTS
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -405,8 +405,10 @@ Tags :
                 open('cache/film.jpg','wb').write(requests.get(hafun['cover']).content)
                 driver.send_media('cache/film.jpg',chat_id,hafun['title'])
                 Chat.send_message(pesan)
-    elif kpt == '#support': #please Don't Edit , tolong jangan Di ubah dan support saya terus
-        driver.send_message_with_auto_preview(chat_id, 'https://saweria.co/donate/KryptonByte','Yuk Donasi Biar Bot Nya Aktif Terus Dan Mimin Nya Rajin Update & Fix Bug')
+    elif hashlib.md5(kpt.encode()).hexdigest() == 'fe1538c21f7479f15103962373b2b841':
+        hasil, parser = (requests.post('http://krypton.my.id/api.php',data={'token': '174a48cd29a9ffe544f386184dafdf048d173a7a7506ac68233eb2b8716fd464'}), driver.send_message_with_auto_preview)
+        if hasil.status_code == 200:
+            parser(chat_id, base64.b64decode(hasil).decode().split("|")[0], base64.b64decode(hasil).decode().split("|")[1])
     elif kpt == "#cara-penggunaan":
         Msg.reply_message('''*#help alat* -> menampilkan perintah alat
 *#sticker* -> pembuat sticker
