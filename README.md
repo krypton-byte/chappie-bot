@@ -23,24 +23,24 @@ python3 main3.py
 |#dog          | Gambar anjing secara acak                                |
 |#neko         | Gambar Kucing secara acak                                |
 |#kitsune      | Gambar Rubah  secara acak                                |
-|#joke         |                                                          |
-|#bct          |                                                          |
+|#joke         | Joke Generator                                           |
+|#bct          | Mengubah Semua Huruf Vokal Ke huruf "i"                  |
 |#film         | Pencari Film                                             |
 |#yt2mp3       | Penkonversi Video Dari YT ke audio                       |
-|#yt           |                                                          |
+|#yt           | Download Video Dari Youtube Tidak Termasuk Audio         |
 |#cari         | Pencari Kata kunci                                       |
-|#quote        |                                                          |
-|#quotemaker   |                                                          |
+|#quote        | random quote                                             |
+|#quotemaker   | Quotes Generator                                         |
 |#qa           | Mengajari Bot berbicara                                  |
 |#nime         | Pencari anime                                            |
 |#qrreader     | Pembaca barcode                                          |
 |#             | ChatBot                                                  |
 |#ocr          | Mengubah gambar ke text                                  |
 |#doujin       | Penkonversi kode nuklir ke File document (*.pdf)         |
-|#revoke       |                                                          |
-|#admin        |                                                          |
-|#unadmin      |                                                          |
-|#owner        |                                                          |
-|#list-admin   |                                                          |
-|#kick         |                                                          |
-|#add          |                                                          |
+|#revoke       | Menarik Tautan Invite Grup                               |
+|#admin        | Menpromote sesorang                                      |
+|#unadmin      | MenDemote sesorang                                       |
+|#owner        | Owner Grup                                               |
+|#list-admin   | List Admin Grup                                          |
+|#kick         | Kick Seseorang Drai Grup                                 |
+|#add          | Menambahkan Seseorang Dari Grup                          |
