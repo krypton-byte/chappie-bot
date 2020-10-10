@@ -20,6 +20,7 @@ help_={
 -> #qrreader
 -> #?
 -> #wait
+-> #tulis
 -> #ocr
 -> #url2png
 -> #run

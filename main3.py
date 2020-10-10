@@ -1,8 +1,7 @@
 #!/usr/bin/python
 '''
  @AUTHOR : KRYPTON-BYTE
- @DATE   : THU OCT 8, 2020
- @NOTE   : Jangan Recode Ya Om Apalagi Link Donasi nya
+ @DATE   : SAT OCT 10, 2020
 '''
 kasar=[]
 from os import remove, wait
@@ -18,7 +17,7 @@ from ast import literal_eval
 from gtts import gTTS
 from io import BytesIO
 from concurrent.futures.thread import ThreadPoolExecutor
-#------------module Buatan--------------#
+#------------Module Buatan--------------#
 from lib.dewabatch import cari as dewabatch
 from lib.sdmovie import fun
 from lib.chatbot import chatBot
@@ -27,12 +26,13 @@ from lib.menu import menu
 from lib.api import *
 from lib.kasar import *
 from lib.brainly import *
+from lib.nulis import tulis
 #-----------setting----------------------#
 tempChatBot={}
 wikipedia.set_lang('id')
 tra=Translator()
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#sticker","#stiker","#upimg","#cari","#support","#cara-penggunaan","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
+FullCommand=["#help","#sticker","#stiker","#upimg","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
 #kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
 class GetRepMedia:
@@ -153,6 +153,14 @@ def replyCommand(Msg, Chat):
             else:
                 Msg.reply_message("Gagal di cari")
             os.remove("cache/%s.jpg"%ran)
+    elif kpt == "#tulis":
+        print("tulis")
+        tulisan=tulis(chat[7:])
+        print("tulis1")
+        tulisan.save("cache/%s.jpg"%ran)
+        print("tulis2")
+        driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Di Tulis")
+        print("tulis3")
     elif kpt == "#upimg":
         rep=GetRepMedia(Msg)
         if rep.type == "image":
@@ -281,13 +289,19 @@ Tags :
         open('cache/image.jpg','wb').write(requests.get(url).content)
         driver.send_media('cache/image.jpg',chat_id,'%s Apakah Kamu Suka ?'%(args[0]))
     elif kpt == '#mentionall':
+        print("Mentionall")
         if Msg.sender.id in [(x.id) for x in Chat.get_admins()] or Msg.sender.id == '6283172366463@c.us':
-            admins=Chat.get_admins()
+            print("masuk")
             semua=Chat.get_participants()
+            print("semua")
+            print(semua)
             pesan=''
             for i in semua:
                 pesan+='@%s '%(i.id)
-            driver.wapi_functions.sendMessageWithMentions(Chat.id,pesan.replace('@c.us',''),'')
+                print(i.id)
+            print(pesan)
+            driver.wapi_functions.sendMessageWithMentions(Chat.id, pesan.replace('@c.us',''),'')
+            print("terkirim")
         else:
             Msg.reply_message('Anda Bukan Admin Group')
     elif kpt == '#?':
@@ -341,9 +355,9 @@ Tags :
                 'tipe':arg[2]
             }).text)
             if hasil['status']:
-                open('cache/%sjpg'%ran,'wb').write(requests.get(hasil['result']).content)
+                open('cache/%s.jpg'%ran,'wb').write(requests.get(hasil['result']).content)
                 driver.send_media('cache/%s.jpg'%ran,chat_id,'apakah kamu suka ? ')
-                os.remmove("%s.jpg"%ran)
+                os.remove("cache/%s.jpg"%ran)
             else:
                 Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
         except:
@@ -363,7 +377,9 @@ Tags :
     elif kpt == '#run':
         Msg.reply_message('Hasil Eksekusi :\n%s'%(requests.get('https://twilio-apis.herokuapp.com/',params={'cmd':chat[4:]}).text))
     elif kpt == '#waifu':
+        print("waifu")
         hasil=waifu()
+        print(waifu)
         open('cache/waifu.png','wb').write(requests.get(hasil['image']).content)
         driver.send_media('cache/waifu.png', chat_id, hasil['title'])
     elif kpt == '#url2png':
@@ -441,6 +457,8 @@ con : #tts id Hallo Saya Bot
 *#wait* -> pencari judul Anime Menggunakan potongan scene
 *#quotemaker* -> pembuat quotes
 con : #quotemaker|Teks Kuotes|Penulis|happy
+*#nulis* -> Menulis Text
+con : #tulis Nama : Krypton-Byte
 *#yt2mp3* -> pencari link download lagu dengan link youtube
 con : #yt2mp3 #https://www.youtube.com/watch?v=FQQbRBs3nFY
 *#yt2mp3* -> pencari download video dari youtube tidak termasuk audio

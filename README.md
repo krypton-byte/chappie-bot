@@ -43,4 +43,8 @@ python3 main3.py
 |#owner        | Owner Grup                                               |
 |#list-admin   | List Admin Grup                                          |
 |#kick         | Kick Seseorang Drai Grup                                 |
+<<<<<<< HEAD
 |#add          | Menambahkan Seseorang Dari Grup                          |
+=======
+|#add          | Menambahkan Seseorang Dari Grup                          |
+>>>>>>> f0a6efe1d908da82d97a5efdb37a7433e55eec76
