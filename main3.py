@@ -161,6 +161,7 @@ def replyCommand(Msg, Chat):
             ran=secrets.token_hex(7)
             i.save("cache/%s.jpg"%ran)
             driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Di Tulis")
+        os.remove("cache/%s.jpg"%ran)
     elif kpt == "#upimg":
         rep=GetRepMedia(Msg)
         if rep.type == "image":
