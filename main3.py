@@ -515,7 +515,7 @@ con : #bct Aku Saya kamu
                 tempChatBot.update({q:[a]})
                 Msg.reply_message("Q : %s\nA : %s"%(q, a))
         else:
-            Msg.reply_message("#learn question|answer")
+            Msg.reply_message("#qa question|answer")
     elif kpt == '#':
         if args:
             Mc=chatBot(chat[2:])
