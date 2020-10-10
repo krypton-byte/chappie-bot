@@ -36,6 +36,7 @@ python3 main3.py
 |#qrreader     | Pembaca barcode                                          |
 |#             | ChatBot                                                  |
 |#ocr          | Mengubah gambar ke text                                  |
+|#tulis        | Tulis Text                                               |
 |#doujin       | Penkonversi kode nuklir ke File document (*.pdf)         |
 |#revoke       | Menarik Tautan Invite Grup                               |
 |#admin        | Menpromote sesorang                                      |
@@ -43,8 +44,5 @@ python3 main3.py
 |#owner        | Owner Grup                                               |
 |#list-admin   | List Admin Grup                                          |
 |#kick         | Kick Seseorang Drai Grup                                 |
-<<<<<<< HEAD
 |#add          | Menambahkan Seseorang Dari Grup                          |
-=======
-|#add          | Menambahkan Seseorang Dari Grup                          |
->>>>>>> f0a6efe1d908da82d97a5efdb37a7433e55eec76
+Masih Banyak Lagi
