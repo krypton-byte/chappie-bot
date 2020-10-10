@@ -1,10 +1,15 @@
-<b>INSTALLANSI</b>
-<p> install Chrome Dan Chromedriver terlebih dahulu</p>
+<b>INSTALASI</b>
+<p> install Chrome Dan Chromedriver terlebih dahulu<br>Setelah install Chrome dan ChromeDriver</p>
 
+### Install bahan
+```bash
+> sudo apt install tesseract-ocr
+> pip3 install -r requirements.txt
 ```
-sudo apt install tesseract-ocr
-pip3 install -r requirements.txt
-python3 main3.py
+
+### Menjalankan Bot
+```bash
+> python3 main3.py
 ```
 <b>FiTUR</b>
 
