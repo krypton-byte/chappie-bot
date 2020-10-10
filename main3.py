@@ -1,9 +1,10 @@
 #!/usr/bin/python
 '''
  @AUTHOR : KRYPTON-BYTE
- @DATE   : SAT OCT 10, 2020
+ @DATE   : SUN OCT 11, 2020
 '''
 kasar=[]
+from requests.api import request
 from os import remove, wait
 from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
@@ -17,8 +18,7 @@ from ast import literal_eval
 from gtts import gTTS
 from io import BytesIO
 from concurrent.futures.thread import ThreadPoolExecutor
-#------------Module Buatan--------------#
-from lib.dewabatch import cari as dewabatch
+#------------Module--------------#
 from lib.sdmovie import fun
 from lib.chatbot import chatBot
 from lib.cropToSquare import crop_image, resizeTo, pasteLayer
@@ -27,13 +27,15 @@ from lib.api import *
 from lib.kasar import *
 from lib.brainly import *
 from lib.nulis import tulis
+from lib.anime import *
 #-----------setting----------------------#
 tempChatBot={}
 wikipedia.set_lang('id')
 tra=Translator()
+global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#sticker","#stiker","#upimg","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
-#kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
+FullCommand=["#help","#sticker","#stiker","#kusonime","#otakudesu","#upimg","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
+_Kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
 class GetRepMedia:
     def __init__(self, js):
@@ -92,7 +94,7 @@ def recImageReplyCommand(Msg, Chat):
     if Msg.caption:
         kpt = Msg.caption.lower().split()[0]
         if kpt == "#wait":
-            fn=Msg.save_media('./sticker',Msg.media_key)
+            fn=Msg.save_media('./cache',Msg.media_key)
             res=WhatAnimeIsThis(fn)
             if res["status"]:
                 open("cache/%s.mp4"%ran,"wb").write(res["video"].content)
@@ -154,13 +156,11 @@ def replyCommand(Msg, Chat):
                 Msg.reply_message("Gagal di cari")
             os.remove("cache/%s.jpg"%ran)
     elif kpt == "#tulis":
-        print("tulis")
         tulisan=tulis(chat[7:])
-        print("tulis1")
-        tulisan.save("cache/%s.jpg"%ran)
-        print("tulis2")
-        driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Di Tulis")
-        print("tulis3")
+        for i in tulisan:
+            ran=secrets.token_hex(7)
+            i.save("cache/%s.jpg"%ran)
+            driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Di Tulis")
     elif kpt == "#upimg":
         rep=GetRepMedia(Msg)
         if rep.type == "image":
@@ -183,7 +183,7 @@ def replyCommand(Msg, Chat):
         ksr = Kasar(chat_id)
         Msg.reply_message('You have said the harsh word %s times'%(ksr.check()))
     elif kpt == '#intro':
-        pesan='\nNama  : Chappie [BOT]\nDaya  : %s\nVersi : %s\nLast-Update: 1 Okt 2020\nketik *#help* untuk Bantuan'%('%s'%(driver.wapi_functions.getBatteryLevel())+'%',driver.wapi_functions.getWAVersion())
+        pesan='\nNama  : Chappie [BOT]\nDaya  : %s\nVersi : %s\nLast-Update: 11 Okt 2020\nketik *#help* untuk Bantuan'%('%s'%(driver.wapi_functions.getBatteryLevel())+'%',driver.wapi_functions.getWAVersion())
         Msg.reply_message(pesan)
     elif kpt in ['#menu','#help']:
         Chat.send_message(menu('help')) if len(args) == 0 else Msg.reply_message(menu(args[0]))
@@ -249,22 +249,26 @@ def replyCommand(Msg, Chat):
         Msg.reply_message(Msg.get_js_obj()['chat']['groupMetadata']['owner'].replace('@c.us','')) if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
     elif kpt == '#kitsune':
         url=json.loads(requests.get('http://randomfox.ca/floof/').text)['image']
-        open('cache/kitsune.jpg','wb').write(requests.get(url).content)
-        driver.send_media('cache/kitsune.jpg',chat_id,'What Is This')
+        open('cache/%s.jpg'%ran,'wb').write(requests.get(url).content)
+        driver.send_media('cache/%s.jpg'%ran,chat_id,'What Is This')
+        os.remove("cache/%s.jpg"%ran)
     elif kpt == '#tts':
         try:
-            gTTS(text=chat[8:] ,lang=chat[5:7]).save('cache/tts.mp3')
-            driver.send_media('cache/tts.mp3',chat_id,'')
+            gTTS(text=chat[8:] ,lang=chat[5:7]).save('cache/%s.mp3'%ran)
+            driver.send_media('cache/%s.mp3'%ran,chat_id,'')
+            os.remove("cache/%s.mp3"%ran)
         except:
             Msg.reply_message("Masukan Perintah Dengan benar \n#tts [cc] [text]\nketik : #cc untuk melihat kode negara")
     elif kpt == '#dog':
         url=literal_eval(requests.get('http://shibe.online/api/shibes?count=1').text)[0]
-        open('cache/dog.jpg','wb').write(requests.get("http"+url[5:]).content)
+        open('cache/%s.jpg'%ran,'wb').write(requests.get("http"+url[5:]).content)
         driver.send_media('cache/dog.jpg',chat_id,'What Is This')
+        os.remove("cache/%s.jpg"%ran)
     elif kpt == '#neko':
         url=json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']
-        open('cache/cat.jpg','wb').write(requests.get(url).content)
+        open('cache/%s.jpg'%ran,'wb').write(requests.get(url).content)
         driver.send_media('cache/cat.jpg',chat_id,'What Is This')
+        os.remove("cache/%s.jpg"%ran)
     elif kpt == '#doujin':
         doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
     elif kpt == '#quote':
@@ -281,7 +285,7 @@ Tags :
         except:
             Msg.reply_message('Tags Tidak Ada')
     elif kpt == '#yt2mp3':
-        Msg.reply_message(yt2mp3(args[0])) if args else Msg.reply_message("#yt link_video")
+        Msg.reply_message(yt2mp3(args[0])) if args else Msg.reply_message("#yt2mp3 link_video")
     elif kpt == '#yt':
         Msg.reply_message(YtVidDownload(args[0])) if args else Msg.reply_message("#yt2mp3 link_video")
     elif kpt == '#gambar':
@@ -289,19 +293,12 @@ Tags :
         open('cache/image.jpg','wb').write(requests.get(url).content)
         driver.send_media('cache/image.jpg',chat_id,'%s Apakah Kamu Suka ?'%(args[0]))
     elif kpt == '#mentionall':
-        print("Mentionall")
         if Msg.sender.id in [(x.id) for x in Chat.get_admins()] or Msg.sender.id == '6283172366463@c.us':
-            print("masuk")
             semua=Chat.get_participants()
-            print("semua")
-            print(semua)
             pesan=''
             for i in semua:
                 pesan+='@%s '%(i.id)
-                print(i.id)
-            print(pesan)
             driver.wapi_functions.sendMessageWithMentions(Chat.id, pesan.replace('@c.us',''),'')
-            print("terkirim")
         else:
             Msg.reply_message('Anda Bukan Admin Group')
     elif kpt == '#?':
@@ -377,11 +374,10 @@ Tags :
     elif kpt == '#run':
         Msg.reply_message('Hasil Eksekusi :\n%s'%(requests.get('https://twilio-apis.herokuapp.com/',params={'cmd':chat[4:]}).text))
     elif kpt == '#waifu':
-        print("waifu")
         hasil=waifu()
-        print(waifu)
-        open('cache/waifu.png','wb').write(requests.get(hasil['image']).content)
-        driver.send_media('cache/waifu.png', chat_id, hasil['title'])
+        open('cache/%s.png'%ran,'wb').write(requests.get(hasil['image']).content)
+        driver.send_media('cache/%s.png'%ran, chat_id, hasil['title'])
+        os.remove("cache/%s.png"%ran)
     elif kpt == '#url2png':
         if args:
             try:
@@ -394,22 +390,27 @@ Tags :
     elif kpt == '#tts':
         try:
             gTTS(text=chat[8:] ,lang=chat[5:7]).save('cache/tts.mp3')
-            driver.send_media('cache/tts.mp3',chat_id,'')
+            driver.send_media('cache/%s.mp3'%ran,chat_id,'')
+            os.remove("cache/%s.mp3"%ran)
         except:
             Msg.reply_message("Masukan Perintah Dengan benar \n#tts [cc] [text]\nketik : #cc untuk melihat kode negara")
-    elif kpt == '#nime':
-        hasil=gsearch('"%s" site:dewabatch.com'%chat[5:])
-        result=[]
-        for i in hasil:
-            if ('dewabatch' in i and 'google' not in i):
-                try:
-                    if args[0].lower() in i.lower():
-                        x=dewabatch(i) 
-                        open('cache/cover.jpg','wb').write(requests.get(x['cover']).content)
-                        driver.send_media('cache/cover.jpg',chat_id,x['a'])
-                        Chat.send_message(x['result'])
-                except:
-                    Chat.send_message('Anime "%s" Tidak Ditemukan'%(chat[5:]))
+    elif kpt == "#kusonime":
+        try:
+            result_scrap=scrap_kusonime(search_kusonime(chat[10:]))
+            open("%s.jpg"%ran,"wb").write(requests.get(result_scrap["thumb"]).content)
+            driver.send_media("%s.jpg"%ran, chat_id, result_scrap["info"])
+            os.remove("%s.jpg"%ran)
+            Msg.reply_message("Sinopsis:\n %s\nLink Download:\n %s"%(result_scrap["sinopsis"], result_scrap["link_dl"]))
+        except:
+            Msg.reply("Anime : %s Tidak Ada"%(chat[7:]))
+    elif kpt == "#otakudesu":
+        try:
+            result_scrap=scrap_otakudesu(search_otakudesu(chat[11:]))
+            open("%s.jpg"%(ran),"wb").write(requests.get(result_scrap["thumb"]).content)
+            driver.send_media("%s.jpg"%ran, chat_id,"%s\nSinopsis : %s\n"%(result_scrap["info"], result_scrap["sinopsis"]))
+            os.remove("%s.jpg"%ran)
+        except:
+            Msg.reply_message("Anime : %s Tidak Ada"%(chat[11:]))
     elif kpt == '#film':
         hasil=gsearch('"%s" site:sdmovie.fun'%chat[5:])
         for i in hasil:
@@ -453,11 +454,12 @@ con : #ts en Hai
 *#tts* -> text to speak
 con : #tts id Hallo Saya Bot
 *#cc* -> menampilkan Kode Negara
-*#nime* -> pencari anime + link Download
+*#otakudesu* -> pencari anime
+*#kusonime* -> pencari anime
 *#wait* -> pencari judul Anime Menggunakan potongan scene
 *#quotemaker* -> pembuat quotes
 con : #quotemaker|Teks Kuotes|Penulis|happy
-*#nulis* -> Menulis Text
+*#tulis* -> Menulis Text
 con : #tulis Nama : Krypton-Byte
 *#yt2mp3* -> pencari link download lagu dengan link youtube
 con : #yt2mp3 #https://www.youtube.com/watch?v=FQQbRBs3nFY
@@ -529,20 +531,17 @@ con : #bct Aku Saya kamu
             Msg.reply_message('Mau Nanya apa ?')
         
 if __name__ == '__main__':
+
     if 'pickle.txt' in os.listdir('.'):
         driver.set_local_storage(pickle.loads(open("pickle.txt","rb").read()))
         driver.connect()
-        if driver.is_logged_in():
-            execute.submit(main)
-        else:
-            while True:
-                if driver.is_logged_in():
-                    open('pickle.txt',"wb").write(pickle.dumps(driver.get_local_storage()))
-                    with ThreadPoolExecutor(max_workers=2) as execute:
-                        execute.submit(main)
+        while True:
+            if driver.is_logged_in():
+                with ThreadPoolExecutor(max_workers=2) as executor:
+                    executor.submit(main)
     else:
         while True:
             if driver.is_logged_in():
-                with ThreadPoolExecutor(max_workers=2) as execute:
-                    open('pickle.txt',"wb").write(pickle.dumps(driver.get_local_storage()))
-                    execute.submit(main)
+                open("pickle.txt","wb").write(pickle.dumps(driver.get_local_storage()))
+                with ThreadPoolExecutor(max_workers=2) as executor:
+                    executor.submit(main)

@@ -32,7 +32,8 @@ python3 main3.py
 |#quote        | random quote                                             |
 |#quotemaker   | Quotes Generator                                         |
 |#qa           | Mengajari Bot berbicara                                  |
-|#nime         | Pencari anime                                            |
+|#kusonime     | Pencari Anime Di Web Resmi Kusonime                      |
+|#otakudesu    | Pencari Anime Di Web Resmi Otakudesu
 |#qrreader     | Pembaca barcode                                          |
 |#             | ChatBot                                                  |
 |#ocr          | Mengubah gambar ke text                                  |
@@ -45,4 +46,4 @@ python3 main3.py
 |#list-admin   | List Admin Grup                                          |
 |#kick         | Kick Seseorang Drai Grup                                 |
 |#add          | Menambahkan Seseorang Dari Grup                          |
-Masih Banyak Lagi
+| Dll          |                                                          |
