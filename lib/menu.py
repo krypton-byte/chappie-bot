@@ -26,7 +26,8 @@ help_={
 -> #run
 -> #doujin
 -> #film
--> #nime
+-> #kusonime
+-> #otakudesu
 -> #ts [cc] [text]
 -> #tts [cc] [text]
 -> #quotemaker
