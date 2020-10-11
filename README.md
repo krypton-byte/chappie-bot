@@ -1,10 +1,18 @@
 <b>INSTALLANSI</b>
 <p> install Chrome Dan Chromedriver terlebih dahulu</p>
 
+<b>Debian/Linux</b>
 ```
-sudo apt install tesseract-ocr
-pip3 install -r requirements.txt
-python3 main3.py
+> sudo apt install tesseract-ocr
+> pip3 install -r requirements.txt
+> python3 main3.py
+```
+<b>Windows</b>
+install microsoft visual C++ 14.0
+```
+> pip install python-magic-bin
+> pip install -r requirements.txt
+> python main3.py
 ```
 <b>FiTUR</b>
 
