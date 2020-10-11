@@ -5,7 +5,7 @@
 '''
 kasar=[]
 from requests.api import request
-from os import remove, wait
+from os import remove
 from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
@@ -263,12 +263,12 @@ def replyCommand(Msg, Chat):
     elif kpt == '#dog':
         url=literal_eval(requests.get('http://shibe.online/api/shibes?count=1').text)[0]
         open('cache/%s.jpg'%ran,'wb').write(requests.get("http"+url[5:]).content)
-        driver.send_media('cache/dog.jpg',chat_id,'What Is This')
+        driver.send_media('cache/%s.jpg'%ran,chat_id,'What Is This')
         os.remove("cache/%s.jpg"%ran)
     elif kpt == '#neko':
         url=json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']
         open('cache/%s.jpg'%ran,'wb').write(requests.get(url).content)
-        driver.send_media('cache/cat.jpg',chat_id,'What Is This')
+        driver.send_media('cache/%s.jpg'%ran,chat_id,'What Is This')
         os.remove("cache/%s.jpg"%ran)
     elif kpt == '#doujin':
         doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
