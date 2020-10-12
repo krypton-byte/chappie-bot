@@ -7,7 +7,7 @@
 > pip3 install -r requirements.txt
 > python3 main3.py
 ```
-<b>Windows</b>
+<b>Windows</b><br>
 install microsoft visual C++ 14.0
 ```
 > pip install python-magic-bin

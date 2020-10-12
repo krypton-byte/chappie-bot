@@ -1,3 +1,4 @@
+from logging import error
 import requests, json, random
 import sys, base64
 from urllib.parse import quote, unquote
@@ -91,13 +92,18 @@ def yt2mp3(urlyt):
     '''
     try:
         hasilObj=pytube.YouTube(urlyt)
-        ret='judul : %s\nDilihat : %s\n\nDownload :\n'%(hasilObj.title, hasilObj.views)
+        url=''
+        size=0
+        ret='judul : %s\nDilihat : %s'%(hasilObj.title, hasilObj.views)
         for i in hasilObj.streams:
             if i.mime_type == 'audio/mp4':
-                ret += '    mp3 : %s\n'%(shortLink(i.url))
-        return ret
+                url=i.url
+                size=i.filesize
+        if size > 20971520: #max 20mb
+            return {"status":"Large"}
+        return {"status":True,"info":ret,"url":url}
     except Exception:
-        return "Link Error"
+        return {"Status":False}
 def bacot(chat):
     '''
     chat : String

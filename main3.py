@@ -3,12 +3,14 @@
  @AUTHOR : KRYPTON-BYTE
  @DATE   : SUN OCT 11, 2020
 '''
+#proxy : 51.161.116.223:3128
 kasar=[]
 from requests.api import request
 from os import remove
 from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
+from moviepy import editor
 from googletrans import Translator
 import time, base64, pytesseract, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
 from gtts import gTTS
@@ -286,7 +288,21 @@ Tags :
         except:
             Msg.reply_message('Tags Tidak Ada')
     elif kpt == '#yt2mp3':
-        Msg.reply_message(yt2mp3(args[0])) if args else Msg.reply_message("#yt2mp3 link_video")
+        if args:
+            print("args")
+            has=yt2mp3(args[0])
+            if has["status"] == "Large":
+                Msg.reply_message("Ukuran File Melebihi Batas Maksimal")
+            elif has["status"] == True:
+                aud=editor.AudioFileClip(has["url"])
+                aud.write_audiofile("cache/%s.mp3"%ran)
+                driver.send_media("cache/%s.mp3"%ran, chat_id, "")
+                Msg.reply_message(has["info"])
+                os.remove("cache/%s.mp3"%ran)
+            else:
+                Msg.reply_message("Link Video Tidak Valid")
+        else:
+            Msg.reply_message("Masukan Url")
     elif kpt == '#yt':
         Msg.reply_message(YtVidDownload(args[0])) if args else Msg.reply_message("#yt2mp3 link_video")
     elif kpt == '#gambar':
