@@ -3,7 +3,6 @@
  @AUTHOR : KRYPTON-BYTE
  @DATE   : SUN OCT 11, 2020
 '''
-#proxy : 51.161.116.223:3128
 kasar=[]
 from requests.api import request
 from os import remove
@@ -289,7 +288,6 @@ Tags :
             Msg.reply_message('Tags Tidak Ada')
     elif kpt == '#yt2mp3':
         if args:
-            print("args")
             has=yt2mp3(args[0])
             if has["status"] == "Large":
                 Msg.reply_message("Ukuran File Melebihi Batas Maksimal")
