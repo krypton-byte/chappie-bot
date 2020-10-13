@@ -24,6 +24,7 @@ def tulis(text):
         draw.text((170, int(line)), i, font=font, fill=(0, 0, 0)) #selisih = Line
         line+=37 + 2.2
     output.append(img)
+    print(output)
     if len(spliter) > 25:
         tulis(spliter[25:])
     return output
