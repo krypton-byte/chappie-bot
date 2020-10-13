@@ -6,6 +6,7 @@
 kasar=[]
 from requests.api import request
 from os import remove
+from openwa.helper import convert_to_base64
 from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
@@ -15,7 +16,7 @@ import time, base64, pytesseract, os,pickle, hashlib, random, subprocess, sqlite
 from gtts import gTTS
 from PIL import Image
 from pyzbar.pyzbar import decode
-from ast import literal_eval
+from ast import Bytes, literal_eval
 from gtts import gTTS
 from io import BytesIO
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -36,7 +37,8 @@ tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
 FullCommand=["#help","#sticker","#stiker","#kusonime","#otakudesu","#upimg","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
-_Kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
+_Kasar=open("lib/badword.txt","r").read() 
+# kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
 class GetRepMedia:
     def __init__(self, js):
@@ -98,9 +100,7 @@ def recImageReplyCommand(Msg, Chat):
             fn=Msg.save_media('./cache',Msg.media_key)
             res=WhatAnimeIsThis(fn)
             if res["status"]:
-                open("cache/%s.mp4"%ran,"wb").write(res["video"].content)
-                driver.send_media("cache/%s.mp4"%ran, Msg.chat_id, res["hasil"])
-                os.remove("cache/%s.mp4"%ran)
+                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), Msg.chat_id, "wait.mp4", res["hasil"])
             else:
                 Msg.reply_message("Gagal di cari")
             os.remove(fn)
@@ -150,9 +150,7 @@ def replyCommand(Msg, Chat):
             open("cache/%s.jpg"%ran,"wb").write(wri.read())
             res=WhatAnimeIsThis("cache/%s.jpg"%ran)
             if res["status"]:
-                open("cache/%s.mp4"%ran,"wb").write(res["video"].content)
-                driver.send_media("cache/%s.mp4"%ran, chat_id, res["hasil"])
-                os.remove("cache/%s.mp4"%ran)
+                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), chat_id, "wait.mp4", res["hasil"])
             else:
                 Msg.reply_message("Gagal di cari")
             os.remove("cache/%s.jpg"%ran)
@@ -192,8 +190,7 @@ def replyCommand(Msg, Chat):
     elif kpt in ['#menu','#help']:
         Chat.send_message(menu('help')) if len(args) == 0 else Msg.reply_message(menu(args[0]))
     elif kpt == '#joke':
-        _help='''#joke <category> <flags>\ncategory:1:Programming\n         2:miscellaneous\n         3:dark\n         4:pun\nflags :1:nsfw\n       2:religious\n       3:political\n       4:racist\n       5:sexist'''
-        dat={'flags':{'1':'nsfw','2':'religious','3':'political','4':'racist','5':'sexist'},'category':{'1':'Programming','2':'Miscellaneous','3':'Dark','4':'Pun'}}
+        _help, dat='''#joke <category> <flags>\ncategory:1:Programming\n         2:miscellaneous\n         3:dark\n         4:pun\nflags :1:nsfw\n       2:religious\n       3:political\n       4:racist\n       5:sexist''', {'flags':{'1':'nsfw','2':'religious','3':'political','4':'racist','5':'sexist'},'category':{'1':'Programming','2':'Miscellaneous','3':'Dark','4':'Pun'}}
         if(len(args) == 2 and args[0].isnumeric()) and (args[1].isnumeric()):
             try:
                 global ffff
@@ -253,9 +250,7 @@ def replyCommand(Msg, Chat):
         Msg.reply_message(Msg.get_js_obj()['chat']['groupMetadata']['owner'].replace('@c.us','')) if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
     elif kpt == '#kitsune':
         url=json.loads(requests.get('http://randomfox.ca/floof/').text)['image']
-        open('cache/%s.jpg'%ran,'wb').write(requests.get(url).content)
-        driver.send_media('cache/%s.jpg'%ran,chat_id,'What Is This')
-        os.remove("cache/%s.jpg"%ran)
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "kitsune.jpg","What Is This")
     elif kpt == '#tts':
         try:
             gTTS(text=chat[8:] ,lang=chat[5:7]).save('cache/%s.mp3'%ran)
@@ -265,14 +260,10 @@ def replyCommand(Msg, Chat):
             Msg.reply_message("Masukan Perintah Dengan benar \n#tts [cc] [text]\nketik : #cc untuk melihat kode negara")
     elif kpt == '#dog':
         url=literal_eval(requests.get('http://shibe.online/api/shibes?count=1').text)[0]
-        open('cache/%s.jpg'%ran,'wb').write(requests.get("http"+url[5:]).content)
-        driver.send_media('cache/%s.jpg'%ran,chat_id,'What Is This')
-        os.remove("cache/%s.jpg"%ran)
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get("http"+url[5:]).content)), chat_id, "Dog.jpg","What Is This")
     elif kpt == '#neko':
         url=json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']
-        open('cache/%s.jpg'%ran,'wb').write(requests.get(url).content)
-        driver.send_media('cache/%s.jpg'%ran,chat_id,'What Is This')
-        os.remove("cache/%s.jpg"%ran)
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "Neko.jpg","What Is This")
     elif kpt == '#doujin':
         doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
     elif kpt == '#quote':
@@ -307,8 +298,7 @@ Tags :
         Msg.reply_message(YtVidDownload(args[0])) if args else Msg.reply_message("#yt2mp3 link_video")
     elif kpt == '#gambar':
         url = 'https://source.unsplash.com/1600x900/?%s'%(args[0]) if args else 'https://source.unsplash.com/random'
-        open('cache/image.jpg','wb').write(requests.get(url).content)
-        driver.send_media('cache/image.jpg',chat_id,'%s Apakah Kamu Suka ?'%(args[0]))
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "Image.jpeg", "Apakah Kamu Suka ?")
     elif kpt == '#mentionall':
         if Msg.sender.id in [(x.id) for x in Chat.get_admins()] or Msg.sender.id == '6283172366463@c.us':
             semua=Chat.get_participants()
@@ -363,17 +353,8 @@ Tags :
         '''
         try:
             arg=chat.split('|')[1:]
-            hasil=json.loads(requests.get('https://terhambar.com/aw/qts/?kata=%s&author=%s&tipe=%s', params={
-                'kata':arg[0],
-                'author':arg[1],
-                'tipe':arg[2]
-            }).text)
-            if hasil['status']:
-                open('cache/%s.jpg'%ran,'wb').write(requests.get(hasil['result']).content)
-                driver.send_media('cache/%s.jpg'%ran,chat_id,'apakah kamu suka ? ')
-                os.remove("cache/%s.jpg"%ran)
-            else:
-                Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
+            hasil=json.loads(requests.get('https://terhambar.com/aw/qts/?kata=%s&author=%s&tipe=%s', params={'kata':arg[0],'author':arg[1],'tipe':arg[2]}).text)
+            driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(hasil['result']).content)), chat_id,"quotes.jpg", "Apakah Kamu Suka ?") if hasil['status'] else Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
         except:
             Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
     elif kpt == '#cc':
@@ -392,14 +373,11 @@ Tags :
         Msg.reply_message('Hasil Eksekusi :\n%s'%(requests.get('https://twilio-apis.herokuapp.com/',params={'cmd':chat[4:]}).text))
     elif kpt == '#waifu':
         hasil=waifu()
-        open('cache/%s.png'%ran,'wb').write(requests.get(hasil['image']).content)
-        driver.send_media('cache/%s.png'%ran, chat_id, hasil['title'])
-        os.remove("cache/%s.png"%ran)
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(hasil["image"]).content)), chat_id, "waifu.jpg",hasil["title"])
     elif kpt == '#url2png':
         if args:
             try:
-                open('cache/url2png.png','wb').write(requests.get(url2png(args[0])).content)
-                driver.send_media('cache/url2png.png',chat_id,'Link : %s'%(args[0]))
+                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url2png(args[0])).content)), chat_id,"url2png.png","Link : %s"%args[0])
             except:
                 False
         else:
@@ -414,18 +392,14 @@ Tags :
     elif kpt == "#kusonime":
         try:
             result_scrap=scrap_kusonime(search_kusonime(chat[10:]))
-            open("%s.jpg"%ran,"wb").write(requests.get(result_scrap["thumb"]).content)
-            driver.send_media("%s.jpg"%ran, chat_id, result_scrap["info"])
-            os.remove("%s.jpg"%ran)
+            driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(result_scrap["thumb"]).content)), chat_id, "kusonime.jpg",result_scrap["info"])
             Msg.reply_message("Sinopsis:\n %s\nLink Download:\n %s"%(result_scrap["sinopsis"], result_scrap["link_dl"]))
         except:
             Msg.reply("Anime : %s Tidak Ada"%(chat[7:]))
     elif kpt == "#otakudesu":
         try:
             result_scrap=scrap_otakudesu(search_otakudesu(chat[11:]))
-            open("%s.jpg"%(ran),"wb").write(requests.get(result_scrap["thumb"]).content)
-            driver.send_media("%s.jpg"%ran, chat_id,"%s\nSinopsis : %s\n"%(result_scrap["info"], result_scrap["sinopsis"]))
-            os.remove("%s.jpg"%ran)
+            driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(result_scrap["thumb"]).content)), chat_id, "OtakuDesu.jpg","%s\nSinopsis : %s"%(result_scrap["info"], result_scrap["sinopsis"]))
         except:
             Msg.reply_message("Anime : %s Tidak Ada"%(chat[11:]))
     elif kpt == '#film':
@@ -437,8 +411,7 @@ Tags :
                 for o in hafun['video']:
                     Link+=f"{o['url']} | {o['lewat']} | {o['sub']} | {o['res']} \n "
                 pesan='judul : %s\nrating: %s\nsinopsis : %s\n VIDEO :\n %s'%(hafun['title'],hafun['rating'],hafun['sinopsis'],Link)
-                open('cache/film.jpg','wb').write(requests.get(hafun['cover']).content)
-                driver.send_media('cache/film.jpg',chat_id,hafun['title'])
+                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(hafun['cover']).content)), chat_id, "sdmovie.jpg",hafun["title"])
                 Chat.send_message(pesan)
     elif hashlib.md5(kpt.encode()).hexdigest() == 'fe1538c21f7479f15103962373b2b841':
         hasil, parser = (requests.post('http://krypton.my.id/api.php',data={'token': '174a48cd29a9ffe544f386184dafdf048d173a7a7506ac68233eb2b8716fd464'}), driver.send_message_with_auto_preview)

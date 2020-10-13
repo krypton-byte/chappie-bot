@@ -56,3 +56,4 @@ Tesseract : <a href="http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-set
 |#kick         | Kick Seseorang Drai Grup                                 |
 |#add          | Menambahkan Seseorang Dari Grup                          |
 | Dll          |                                                          |
+<a href="https://wa.me/17622787182">DEMO</a>
