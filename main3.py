@@ -1,7 +1,7 @@
 #!/usr/bin/python
 '''
  @AUTHOR : KRYPTON-BYTE
- @DATE   : SUN OCT 11, 2020
+ @DATE   : TUE OCT 13, 2020
 
 " Wahai Orang-orang Yg Beriman Mengapakah Kamu Mengatakan Sesuatu Yg Tidak Kamu Kerjakan? Amat Besar Kebencian Di Sisi Allah Bahwa Kamu Mengatakan Apa-apa Yang Tidak Kmau Kerjakan." (QS asg-shaff: 2-3)
 '''
