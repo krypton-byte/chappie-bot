@@ -2,7 +2,7 @@
 <p> install Chrome Dan Chromedriver terlebih dahulu</p>
 
 <b>Debian/Linux</b>
-```
+```bash
 > sudo apt install tesseract-ocr
 > pip3 install -r requirements.txt
 > python3 main3.py
@@ -10,7 +10,7 @@
 <b>Windows</b><br>
 install microsoft visual C++ 14.0<br>
 Tesseract : <a href="http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-setup-4.00.00dev.exe"> Link</a>
-```
+```dos
 > pip install python-magic-bin
 > pip install -r requirements.txt
 > python main3.py
