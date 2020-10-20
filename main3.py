@@ -364,8 +364,7 @@ Tags :
         Msg.reply_message(pesan)
     elif kpt == '#ts':
         try:
-            con=tra.translate(text=chat[7:], dest=chat[4:6]).text
-            Msg.reply_message(con)
+            Msg.reply_message(tra.translate(text=chat[7:], dest=chat[4:6]).text)
         except:
             Msg.reply_message('#ts [Target] [Text]\nContoh :\n #ts id good morning \nketik #cc untuk melihat kode negara')
     elif kpt == '#run':
