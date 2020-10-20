@@ -32,6 +32,7 @@ from lib.api import *
 from lib.kasar import *
 from lib.brainly2 import *
 from lib.nulis import tulis
+from lib.fb import fbvid
 from lib.anime import *
 from lib.ig import igdownload
 #-----------setting----------------------#
@@ -40,7 +41,7 @@ wikipedia.set_lang('id')
 tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#sticker","#stiker","#kusonime","#otakudesu","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#joke","#bct"]
+FullCommand=["#help","#sticker","#stiker","#fb","#kusonime","#otakudesu","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#joke","#bct"]
 _Kasar=open("lib/badword.txt","r").read() 
 # kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
@@ -173,6 +174,9 @@ def replyCommand(Msg, Chat):
             pasteLayer("cache/%s.png"%ran)
             driver.send_image_as_sticker("cache/%s.png"%ran,chat_id)
             os.remove("cache/%s.png"%ran)
+    elif kpt == '#fb':
+        link=fbvid(args[0])
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(link["url"]).content)), chat_id, "fb.mp4","") if link["status"] else Msg.reply_message("Kemungkinan Link video salah/ video di privasikan") 
     elif kpt == '#???':
         ksr = Kasar(chat_id)
         Msg.reply_message('You have said the harsh word %s times'%(ksr.check()))
@@ -241,8 +245,7 @@ def replyCommand(Msg, Chat):
     elif kpt == '#owner':
         Msg.reply_message(Msg.get_js_obj()['chat']['groupMetadata']['owner'].replace('@c.us','')) if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
     elif kpt == '#kitsune':
-        url=json.loads(requests.get('http://randomfox.ca/floof/').text)['image']
-        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "kitsune.jpg","What Is This")
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(json.loads(requests.get('http://randomfox.ca/floof/').text)['image']).content)), chat_id, "kitsune.jpg","What Is This")
     elif kpt == '#tts':
         try:
             gTTS(text=chat[8:] ,lang=chat[5:7]).save('cache/%s.mp3'%ran)

@@ -15,6 +15,7 @@ help_={
 -> #sticker
 -> #upimg
 -> #ig
+-> #fb
 -> #cari
 -> #qrmaker
 -> #qrreader
