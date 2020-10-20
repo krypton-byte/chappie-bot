@@ -15,8 +15,12 @@ from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
 from moviepy import editor
 from googletrans import Translator
-import time, base64, tesserocr, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
+import time, base64, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
 from gtts import gTTS
+try:
+     tesserocr
+except:
+    pass
 from PIL import Image
 from pyzbar.pyzbar import decode
 from ast import Bytes, literal_eval
