@@ -1,3 +1,7 @@
+'''
+@Author  : MhankBarBar
+@Github  : https://github.com/MhankBarBar
+'''
 from requests import get
 from bs4 import BeautifulSoup as bs
 import json

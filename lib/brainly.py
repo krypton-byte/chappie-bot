@@ -12,7 +12,7 @@ def brainly(url):
     url : string
     e.g brainly("https://brainly.co.id/tugas/2754169")
     '''
-    headers={'user-agent':"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4183.102 Safari/537.36"}
+    headers={'user-agent':"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/37.0.2062.94 Chrome/37.0.2062.94 Safari/537.36"}
     get=requests.get(url, headers=headers)
     bs=BeautifulSoup(get.text,'html.parser')
     Tangg=bs.find_all('span',class_='sg-text sg-text--xsmall sg-text--gray-secondary')[0]('time')[0]['title']

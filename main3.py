@@ -1,10 +1,11 @@
 #!/usr/bin/python
-'''
+"""
  @AUTHOR : KRYPTON-BYTE
  @DATE   : TUE OCT 13, 2020
 
 " Wahai Orang-orang Yg Beriman Mengapakah Kamu Mengatakan Sesuatu Yg Tidak Kamu Kerjakan? Amat Besar Kebencian Di Sisi Allah Bahwa Kamu Mengatakan Apa-apa Yang Tidak Kmau Kerjakan." (QS asg-shaff: 2-3)
-'''
+"""
+
 kasar=[]
 from requests.api import request
 from os import remove
@@ -14,7 +15,7 @@ from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
 from moviepy import editor
 from googletrans import Translator
-import time, base64, pytesseract, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
+import time, base64, tesserocr, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
 from gtts import gTTS
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -24,21 +25,22 @@ from io import BytesIO
 from concurrent.futures.thread import ThreadPoolExecutor
 #------------Module--------------#
 from lib.sdmovie import fun
-from lib.chatbot import chatBot
+from lib.chatbot import chatbot
 from lib.cropToSquare import crop_image, resizeTo, pasteLayer
 from lib.menu import menu
 from lib.api import *
 from lib.kasar import *
-from lib.brainly import *
+from lib.brainly2 import *
 from lib.nulis import tulis
 from lib.anime import *
+from lib.ig import igdownload
 #-----------setting----------------------#
 tempChatBot={}
 wikipedia.set_lang('id')
 tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#sticker","#stiker","#kusonime","#otakudesu","#upimg","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#qa","#","#joke","#bct"]
+FullCommand=["#help","#sticker","#stiker","#kusonime","#otakudesu","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#joke","#bct"]
 _Kasar=open("lib/badword.txt","r").read() 
 # kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
@@ -68,15 +70,7 @@ def main():
                             executor.submit(replyCommand, (TextObject),(chatObject.chat))
                         elif TextObject.content.split()[0] != '#' and '@g.us' != TextObject.chat_id:
                             if '@c.us' in TextObject.chat_id:
-                                Mc=chatBot(TextObject.content)
-                                Mc.max_()
-                                balas = Mc.balas()
-                                if tempChatBot.get(TextObject.content):
-                                    TextObject.reply_message(random.choice(tempChatBot[TextObject.content]))
-                                elif balas:
-                                    TextObject.reply_message(balas)
-                                else:
-                                    TextObject.reply_message(random.choice(["aku ndak Bisa jawab","bilang apa tadi ?","gimana ya","gak ngerti","mana saya tau","maksud kamu apa bro"]))
+                                TextObject.reply_message(chatbot(TextObject.content))
                     elif TextObject.type == 'image':
                         executor.submit(recImageReplyCommand, (TextObject),(chatObject.chat))
                     elif TextObject.type == 'vcard':
@@ -123,7 +117,7 @@ def recImageReplyCommand(Msg, Chat):
             Msg.reply_message('Text : %s\nType : %s'%(img[0][0].decode(), img[0][1])) if img else Msg.reply_message('Gambar Tidak Valid')
         elif kpt == "#ocr":
             fn=Msg.save_media("./cache", Msg.media_key)
-            Msg.reply_message(pytesseract.image_to_string(Image.open(fn), lang="eng"))
+            Msg.reply_message(tesserocr.file_to_text(fn, lang="eng+ind+jap+chi").strip())
             os.remove(fn)
 def replyCommand(Msg, Chat):
     chat     = Msg.content
@@ -174,7 +168,9 @@ def replyCommand(Msg, Chat):
         rep=GetRepMedia(Msg)
         if rep.type == "image":
             wri = driver.download_media(rep)
-            Msg.reply_message(pytesseract.image_to_string(Image.open(wri), lang="eng").strip())
+            open("%s.jpg"%ran, "wb").write(wri.read())
+            Msg.reply_message(tesserocr.file_to_text("%s.jpg"%ran, lang="eng+ind+jap+chi").strip())
+            os.remove("%s.jpg"%ran)
     elif kpt in ["#sticker","#stiker"]:
         rep = GetRepMedia(Msg)
         if rep.type == "image":
@@ -297,7 +293,21 @@ Tags :
         else:
             Msg.reply_message("Masukan Url")
     elif kpt == '#yt':
-        Msg.reply_message(YtVidDownload(args[0])) if args else Msg.reply_message("#yt2mp3 link_video")
+        if len(args) == 2:
+            if args[1].isnumeric():
+                dow=Merger(args[0], args[1]).down()
+                if dow["status"] == "L":
+                    Msg.reply_message("Ukuran File Melebihi Batas")
+                elif dow["status"] == True:
+                    dow["result"].write_videofile("cache/%s.mp4"%ran)
+                    driver.send_media("cache/%s.mp4"%ran, chat_id, "")
+                    os.remove("cache/%s.mp3"%ran)
+                else:
+                    Msg.reply_message(Merger(args[0]).parser())
+            else:
+                Msg.reply_message(Merger(args[0]).parser())
+        else:
+            Msg.reply_message(Merger(args[0]).parser())
     elif kpt == '#gambar':
         url = 'https://source.unsplash.com/1600x900/?%s'%(args[0]) if args else 'https://source.unsplash.com/random'
         driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "Image.jpeg", "Apakah Kamu Suka ?")
@@ -323,11 +333,7 @@ Tags :
                 for i in temp[:jum]:
                     try:
                         br=brainly(i)
-                        pesan=isi%(br['soal'][1:-1], br['mapel'][1:-1], br['angkatan'][1:-1], br['tanggal'])
-                        for jb in br['jawaban']:
-                            answers+='---------------------------%s'%(jb)
-                        pesan+=answers
-                        Chat.send_message(pesan)
+                        Chat.send_message("%s\n%s"%(br.get("soal"), br.get("jawaban")))
                     except:
                         Msg.reply_message('Gagal Mengambil Jawaban')
             else:
@@ -384,6 +390,22 @@ Tags :
                 False
         else:
             Msg.reply_message('masukan Url \n#url2png https://google.com')
+    elif kpt == '#ig':
+        print("ig")
+        ob=igdownload(args[0])
+        print("Yup")
+        if ob["status"]:
+            print("True")
+            for i in ob["result"]:
+                print("Loop")
+                if i["type"] == "image":
+                    print("image")
+                    driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(i["url"]).content)), chat_id,"ig.jpg","")
+                elif i["type"] == "video":
+                    print("vid")
+                    driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(i["url"]).content)), chat_id,"ig.mp4","")
+        else:
+            Msg.reply_message("Link Error")
     elif kpt == '#tts':
         try:
             gTTS(text=chat[8:] ,lang=chat[5:7]).save('cache/tts.mp3')
@@ -480,8 +502,6 @@ atau anda bisa mengirim kartu kontak
 *#help bot* -> menampilkan perintah bot
 *#* -> chat bot
 #con : # Hai
-*#qa* -> menambahkan kamus kedalam chatbot
-con : #qa ngik|ngok
 *#help hiburan* -> menampilkan perintah yg bisa menghibur
 *#dog* -> mengirimkan gambar anjing secara acak
 *#neko* -> mengirimkan gambar kucing secara acak
@@ -495,33 +515,42 @@ con : #joke 1 3
 *#bct* -> mengubah huruf semua huruf vokal ke huruf "i"
 con : #bct Aku Saya kamu
 *#help* -> menampilkan semua opsi help''')
-    elif kpt == "#qa":
-        if set(chat.lower().replace(" ","|").split("|")) & set(_Kasar):
-            Msg.reply_message("Aku Tidak Mau Menambahkan Kata Itu Ke Kamus Pribadiku")
-        elif len(chat[4:].split('|')) == 2:
-            q=chat[4:].split('|')[0]
-            a=chat[4:].split('|')[1]
-            if tempChatBot.get(q):
-                tempChatBot[q].append(a)
-            else:
-                tempChatBot.update({q:[a]})
-                Msg.reply_message("Q : %s\nA : %s"%(q, a))
-        else:
-            Msg.reply_message("#qa question|answer")
     elif kpt == '#':
         if args:
-            Mc=chatBot(chat[2:])
-            Mc.max_()
-            balas = Mc.balas()
-            if tempChatBot.get(chat[2:]):
-                Msg.reply_message(random.choice(tempChatBot[chat[2:]]))
-            elif balas:
-                Msg.reply_message(balas)
-            else:
-                Msg.reply_message(random.choice(["aku ndak Bisa jawab","bilang apa tadi ?","gimana ya","gak ngerti","mana saya tau","maksud kamu apa bro"]))
+            Msg.reply_message(chatbot(chat))
         else:
             Msg.reply_message('Mau Nanya apa ?')
-        
+    
+
+class Merger:
+    def __init__(self, url, num=None):
+        self.url = url
+        self.num = num
+    def parser(self):
+        YT=YouTube(self.url)
+        pesan="Judul : %s\n"%YT.title
+        for i in enumerate(YT.streams):
+            if i[1].type == "video":
+                pesan+="%s. Res: %s Fps: %s\n"%(i[0],i[1].resolution, i[1].fps)
+        return pesan
+    def ytmp3(self):
+        YT=YouTube(self.url)
+        for i in YT.streams:
+            if i.type == "audio":
+                audio=i
+        aud=AudioFileClip(audio.url)
+        return aud
+    def down(self):
+        YT=YouTube(self.url)
+        if len(YT.streams) > self.num:
+            if YT.streams[self.num].filesize > 20971520:
+                return {"status":"L"}
+            else:
+                vid=VideoFileClip(YT.streams[self.num].url)
+                return {"status":True,"result":vid}
+        else:
+            return {"status":False}
+
 if __name__ == '__main__':
 
     if 'pickle.txt' in os.listdir('.'):

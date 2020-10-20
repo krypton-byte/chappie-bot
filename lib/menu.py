@@ -10,11 +10,11 @@ help_={
     ''',
     'bot':'''
 -> # <q>
--> #qa Q|A
     ''',
     'alat':'''
 -> #sticker
 -> #upimg
+-> #ig
 -> #cari
 -> #qrmaker
 -> #qrreader

@@ -1,3 +1,7 @@
+'''
+@Author  : MhankBarBar
+@Github  : https://github.com/MhankBarBar
+'''
 from requests import *
 from googlesearch import *
 from urllib.parse import *
