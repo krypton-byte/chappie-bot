@@ -210,10 +210,11 @@ def replyCommand(Msg, Chat):
         except:
             Msg.reply_message('masukan Text')
     elif kpt == '#kick': #for Admin
-        try:
-            (Chat.remove_participant_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
-        except Exception as e:
-            Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
+        for i in args:
+            try:
+                (Chat.remove_participant_group(i.replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+            except Exception as e:
+                Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
     elif kpt == '#admin':
         try:
             (Chat.promove_participant_admin_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#admin @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group')  if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
@@ -309,8 +310,7 @@ Tags :
         else:
             Msg.reply_message(Merger(args[0]).parser())
     elif kpt == '#gambar':
-        url = 'https://source.unsplash.com/1600x900/?%s'%(args[0]) if args else 'https://source.unsplash.com/random'
-        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "Image.jpeg", "Apakah Kamu Suka ?")
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get('https://source.unsplash.com/1600x900/?%s'%(args[0]) if args else 'https://source.unsplash.com/random').content)), chat_id, "Image.jpeg", "Apakah Kamu Suka ?")
     elif kpt == '#mentionall':
         if Msg.sender.id in [(x.id) for x in Chat.get_admins()] or Msg.sender.id == '6283172366463@c.us':
             semua=Chat.get_participants()
