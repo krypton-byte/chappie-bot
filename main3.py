@@ -95,10 +95,7 @@ def recImageReplyCommand(Msg, Chat):
         if kpt == "#wait":
             fn=Msg.save_media('./cache',Msg.media_key)
             res=WhatAnimeIsThis(fn)
-            if res["status"]:
-                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), Msg.chat_id, "wait.mp4", res["hasil"])
-            else:
-                Msg.reply_message("Gagal di cari")
+            driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), Msg.chat_id, "wait.mp4", res["hasil"]) if res["status"] else Msg.reply_message("Gagal di cari")
             os.remove(fn)
         elif kpt in ['#stiker','#sticker']:
             try:
@@ -145,10 +142,7 @@ def replyCommand(Msg, Chat):
             wri = driver.download_media(rep)
             open("cache/%s.jpg"%ran,"wb").write(wri.read())
             res=WhatAnimeIsThis("cache/%s.jpg"%ran)
-            if res["status"]:
-                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), chat_id, "wait.mp4", res["hasil"])
-            else:
-                Msg.reply_message("Gagal di cari")
+            driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), chat_id, "wait.mp4", res["hasil"]) if res["status"] else Msg.reply_message("Gagal di cari")
             os.remove("cache/%s.jpg"%ran)
     elif kpt == "#tulis":
         tulisan=tulis(chat[7:])
@@ -183,8 +177,7 @@ def replyCommand(Msg, Chat):
         ksr = Kasar(chat_id)
         Msg.reply_message('You have said the harsh word %s times'%(ksr.check()))
     elif kpt == '#intro':
-        pesan='\nNama  : Chappie [BOT]\nDaya  : %s\nVersi : %s\nLast-Update: 11 Okt 2020\nketik *#help* untuk Bantuan'%('%s'%(driver.wapi_functions.getBatteryLevel())+'%',driver.wapi_functions.getWAVersion())
-        Msg.reply_message(pesan)
+        Msg.reply_message('\nNama  : Chappie [BOT]\nDaya  : %s\nVersi : %s\nLast-Update: 11 Okt 2020\nketik *#help* untuk Bantuan'%('%s'%(driver.wapi_functions.getBatteryLevel())+'%',driver.wapi_functions.getWAVersion()))
     elif kpt in ['#menu','#help']:
         Chat.send_message(menu('help')) if len(args) == 0 else Msg.reply_message(menu(args[0]))
     elif kpt == '#joke':
@@ -258,11 +251,9 @@ def replyCommand(Msg, Chat):
         except:
             Msg.reply_message("Masukan Perintah Dengan benar \n#tts [cc] [text]\nketik : #cc untuk melihat kode negara")
     elif kpt == '#dog':
-        url=literal_eval(requests.get('http://shibe.online/api/shibes?count=1').text)[0]
-        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get("http"+url[5:]).content)), chat_id, "Dog.jpg","What Is This")
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get("http"+literal_eval(requests.get('http://shibe.online/api/shibes?count=1').text)[0][5:]).content)), chat_id, "Dog.jpg","What Is This")
     elif kpt == '#neko':
-        url=json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']
-        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(url).content)), chat_id, "Neko.jpg","What Is This")
+        driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']).content)), chat_id, "Neko.jpg","What Is This")
     elif kpt == '#doujin':
         doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
     elif kpt == '#quote':
