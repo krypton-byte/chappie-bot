@@ -3,7 +3,8 @@
 
 <b>Debian/Linux</b>
 ```bash
-> sudo apt install tesseract-ocr
+> sudo apt install tesseract
+> pip3 install python3-tesserocr
 > pip3 install -r requirements.txt
 > python3 main3.py
 ```
@@ -12,6 +13,7 @@ install microsoft visual C++ 14.0<br>
 Tesseract : <a href="http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-setup-4.00.00dev.exe"> Link</a>
 ```dos
 > pip install python-magic-bin
+> pip install python3-tesserocr
 > pip install -r requirements.txt
 > python main3.py
 ```
@@ -40,9 +42,8 @@ Tesseract : <a href="http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-set
 |#cari         | Pencari Kata kunci                                       |
 |#quote        | random quote                                             |
 |#quotemaker   | Quotes Generator                                         |
-|#qa           | Mengajari Bot berbicara                                  |
 |#kusonime     | Pencari Anime Di Web Resmi Kusonime                      |
-|#otakudesu    | Pencari Anime Di Web Resmi Otakudesu
+|#otakudesu    | Pencari Anime Di Web Resmi Otakudesu                     |
 |#qrreader     | Pembaca barcode                                          |
 |#             | ChatBot                                                  |
 |#ocr          | Mengubah gambar ke text                                  |
@@ -55,5 +56,6 @@ Tesseract : <a href="http://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-set
 |#list-admin   | List Admin Grup                                          |
 |#kick         | Kick Seseorang Drai Grup                                 |
 |#add          | Menambahkan Seseorang Dari Grup                          |
+|#ig           | Download Gambar/video Dari Instagram                     |
 | Dll          |                                                          |
 <a href="https://wa.me/17622787182">DEMO</a>
