@@ -4,6 +4,7 @@
 <b>Debian/Linux</b>
 ```bash
 > sudo apt install tesseract
+> sudo apt install python-zbar
 > pip3 install python3-tesserocr
 > pip3 install -r requirements.txt
 > python3 main3.py

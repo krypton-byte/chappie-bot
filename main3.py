@@ -14,6 +14,7 @@ from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
 from moviepy import editor
+from lib import pytube
 from googletrans import Translator
 import time, base64, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
 from gtts import gTTS
@@ -90,7 +91,7 @@ def main():
                         try:
                             driver.wapi_functions.sendMessageWithMentions(chatObject.chat.id,masuk,'')
                         except Exception:
-                            False
+                            False    
 def recImageReplyCommand(Msg, Chat):
     caption = Msg.caption
     args=caption.split()[1:]
@@ -294,13 +295,13 @@ Tags :
     elif kpt == '#yt':
         if len(args) == 2:
             if args[1].isnumeric():
-                dow=Merger(args[0], args[1]).down()
+                dow=Merger(args[0], int(args[1])).down()
                 if dow["status"] == "L":
                     Msg.reply_message("Ukuran File Melebihi Batas")
                 elif dow["status"] == True:
                     dow["result"].write_videofile("cache/%s.mp4"%ran)
                     driver.send_media("cache/%s.mp4"%ran, chat_id, "")
-                    os.remove("cache/%s.mp3"%ran)
+                    os.remove("cache/%s.mp4"%ran)
                 else:
                     Msg.reply_message(Merger(args[0]).parser())
             else:
@@ -519,34 +520,6 @@ con : #bct Aku Saya kamu
             Msg.reply_message('Mau Nanya apa ?')
     
 
-class Merger:
-    def __init__(self, url, num=None):
-        self.url = url
-        self.num = num
-    def parser(self):
-        YT=YouTube(self.url)
-        pesan="Judul : %s\n"%YT.title
-        for i in enumerate(YT.streams):
-            if i[1].type == "video":
-                pesan+="%s. Res: %s Fps: %s\n"%(i[0],i[1].resolution, i[1].fps)
-        return pesan
-    def ytmp3(self):
-        YT=YouTube(self.url)
-        for i in YT.streams:
-            if i.type == "audio":
-                audio=i
-        aud=AudioFileClip(audio.url)
-        return aud
-    def down(self):
-        YT=YouTube(self.url)
-        if len(YT.streams) > self.num:
-            if YT.streams[self.num].filesize > 20971520:
-                return {"status":"L"}
-            else:
-                vid=VideoFileClip(YT.streams[self.num].url)
-                return {"status":True,"result":vid}
-        else:
-            return {"status":False}
 
 if __name__ == '__main__':
 

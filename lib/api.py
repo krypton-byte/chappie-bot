@@ -5,6 +5,7 @@ from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup
 from io import StringIO
 import contextlib
+from moviepy import editor
 import convertapi
 import math
 from . import pytube
@@ -126,6 +127,36 @@ def waifu():
         'title':f.p.text,
         'image':'http://randomwaifu.altervista.org/%s'%(f.img['src'])
     }
+
+class Merger:
+    def __init__(self, url, num=None):
+        self.url = url
+        self.num = num
+    def parser(self):
+        YT=pytube.YouTube(self.url)
+        pesan="Judul : %s\n"%YT.title
+        for i in enumerate(YT.streams):
+            if i[1].type == "video":
+                pesan+="%s. Res: %s Fps: %s\n"%(i[0],i[1].resolution, i[1].fps)
+        return pesan
+    def ytmp3(self):
+        YT=pytube.YouTube(self.url)
+        for i in YT.streams:
+            if i.type == "audio":
+                audio=i
+        aud=editor.AudioFileClip(audio.url)
+        return aud
+    def down(self):
+        YT=pytube.YouTube(self.url)
+        if len(YT.streams) > self.num:
+            if YT.streams[self.num].filesize > 20971520:
+                return {"status":"L"}
+            else:
+                vid=editor.VideoFileClip(YT.streams[self.num].url)
+                return {"status":True,"result":vid}
+        else:
+            return {"status":False}
+
 def WhatAnimeIsThis(fn):
     '''
     fn : String (Filename)
