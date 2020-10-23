@@ -2,7 +2,7 @@ import requests, json
 def chatbot(question):
     headers = {
        'content-type': 'application/json', 
-       'x-api-key': 'HGOheEzs7VL1.369BDXiVyr5jE~5VuAWPjdOLetG'
+       'x-api-key': '6iwuT7tMxqd1IdWTLHUnQ6Mhrgr6Ry5R3YBSDWDo'
      }
     data = {
       'utext': question, 

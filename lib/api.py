@@ -83,7 +83,7 @@ def doujin(nuklir,driver,chat_id, Msg):
     dujin = json.loads(requests.get('https://terkejoed.herokuapp.com/doujinshi/%s'%(nuklir), timeout=10000).text)
     if dujin['status']:
         open('cache/cover.jpg','wb').write(requests.get('https://terkejoed.herokuapp.com%s'%dujin['cover']).content)
-        driver.send_media('cache/cover.jpg',chat_id,'title : %s \n%s\nLink Download : https://terkejoed.herokuapp.com%s'%(dujin['title'], dujin['tags'], dujin['content']))
+        driver.send_media('cache/cover.jpg',chat_id,'title : %s 🔞\n%s\n🔗 https://terkejoed.herokuapp.com%s'%(dujin['title'], dujin['tags'], dujin['content']))
     else:
         Msg.reply_message('kode Nuklir Salah')
 def yt2mp3(urlyt):

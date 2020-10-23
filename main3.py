@@ -32,7 +32,6 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from lib.sdmovie import fun
 from lib.chatbot import chatbot
 from lib.cropToSquare import crop_image, resizeTo, pasteLayer
-from lib.menu import menu
 from lib.api import *
 from lib.kasar import *
 from lib.brainly2 import *
@@ -156,7 +155,7 @@ def replyCommand(Msg, Chat):
             ran=secrets.token_hex(7)
             print("ran")
             i.save("cache/%s.jpg"%ran)
-            driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Di Tulis")
+            driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Ditulis 📝")
             os.remove("cache/%s.jpg"%ran)
             print("Berhasil Di Tulis")
     elif kpt == "#upimg":
@@ -186,9 +185,65 @@ def replyCommand(Msg, Chat):
         ksr = Kasar(chat_id)
         Msg.reply_message('You have said the harsh word %s times'%(ksr.check()))
     elif kpt == '#intro':
-        Msg.reply_message('\nNama  : Chappie [BOT]\nDaya  : %s\nVersi : %s\nLast-Update: 11 Okt 2020\nketik *#help* untuk Bantuan'%('%s'%(driver.wapi_functions.getBatteryLevel())+'%',driver.wapi_functions.getWAVersion()))
+        Msg.reply_message('🙋‍♂Hallo Saya Chappie-Bot Saya Di Bangun 🛠️ Dengan Bahasa Python3.8 🐍 Dan Beberapa API🔥')
     elif kpt in ['#menu','#help']:
-        Chat.send_message(menu('help')) if len(args) == 0 else Msg.reply_message(menu(args[0]))
+        Chat.send_message('''     🛠️ TOOLS 🛠️
+-> #
+-> #sticker
+-> #upimg
+-> #ig
+-> #fb
+-> #cari
+-> #qrmaker
+-> #qrreader
+-> #?
+-> #wait
+-> #tulis
+-> #ocr
+-> #url2png
+-> #run
+-> #doujin
+-> #film
+-> #kusonime
+-> #otakudesu
+-> #ts [cc] [text]
+-> #tts [cc] [text]
+-> #quotemaker
+-> #yt2mp3
+-> #yt
+-> #wiki
+
+     🕹️HIBURAN 🕹️
+
+-> #dog
+-> #neko
+-> #quote
+-> #kitsune
+-> #gambar
+-> # [chat]
+-> #joke
+-> #waifu
+-> #bct [text]
+    
+
+     👁️‍🗨️   GRUP   👁️‍🗨️
+
+-> #list-admin
+-> #admin
+-> #mentionall
+-> #unadmin
+-> #kick
+-> #add
+-> #owner
+-> #linkgroup
+-> #revoke
+
+     🗣️  BANTUAN 🗣️
+-> #cara-penggunaan
+
+     ☕ DUKUNGAN ☕
+-> #support
+-> #intro''')
     elif kpt == '#joke':
         _help, dat='''#joke <category> <flags>\ncategory:1:Programming\n         2:miscellaneous\n         3:dark\n         4:pun\nflags :1:nsfw\n       2:religious\n       3:political\n       4:racist\n       5:sexist''', {'flags':{'1':'nsfw','2':'religious','3':'political','4':'racist','5':'sexist'},'category':{'1':'Programming','2':'Miscellaneous','3':'Dark','4':'Pun'}}
         if(len(args) == 2 and args[0].isnumeric()) and (args[1].isnumeric()):
@@ -284,7 +339,9 @@ Tags :
                 Msg.reply_message("Ukuran File Melebihi Batas Maksimal")
             elif has["status"] == True:
                 aud=editor.AudioFileClip(has["url"])
+                Chat.send_message("🛠️Sedang Mengkonversi Ke Audio 🛠️")
                 aud.write_audiofile("cache/%s.mp3"%ran)
+                Chat.send_message("Sedang Mengunggah⏳")
                 driver.send_media("cache/%s.mp3"%ran, chat_id, "")
                 Msg.reply_message(has["info"])
                 os.remove("cache/%s.mp3"%ran)
@@ -299,7 +356,9 @@ Tags :
                 if dow["status"] == "L":
                     Msg.reply_message("Ukuran File Melebihi Batas")
                 elif dow["status"] == True:
+                    Chat.send_message("Merging 🛠️")
                     dow["result"].write_videofile("cache/%s.mp4"%ran)
+                    Chat.send_message("Sedang Mengunggah⏳")
                     driver.send_media("cache/%s.mp4"%ran, chat_id, "")
                     os.remove("cache/%s.mp4"%ran)
                 else:
@@ -324,6 +383,7 @@ Tags :
             answers=''
             isi='''Soal    : %s\nMapel   : %s\nSekolah : %s\nTanggal : %s\n'''
             jum, soal = ((int(args[-1])), chat[3:-len(args[-1])]) if args[-1].isnumeric() else (1, chat[3:])
+            Chat.send_message("Sedang Mencari 🔎")
             cari=gsearch('"%s" site:brainly.co.id'%soal)
             temp=[]
             for i in cari:
@@ -334,13 +394,14 @@ Tags :
                         br=brainly(i)
                         Chat.send_message("%s\n%s"%(br.get("soal"), br.get("jawaban")))
                     except:
-                        Msg.reply_message('Gagal Mengambil Jawaban')
+                        Msg.reply_message('❌ Gagal Mencari Jawaban ❌')
             else:
-                Chat.send_message('Mencari Jawaban ? *%s* Tidak Ada'%(soal))
+                Chat.send_message('❌ Mencari Jawaban *%s* Tidak Ada ❌'%(soal))
         else:
-            Msg.reply_message('Masukan Soal Nya Bro')
+            Msg.reply_message('❌ Masukan Soal Yg Ingin Di Jawab ❌')
     elif kpt == '#cari':
         try:
+            Chat.send_message("Sedang Mencari 🔎")
             hasil = wikipedia.search(chat.replace('#cari',''))
             pesan='hasil pencarian : \n'
             for i in hasil:
@@ -353,7 +414,7 @@ Tags :
             hasil=wikipedia.page(chat[6:])
             Msg.reply_message('title :%s\nsource: %s\n%s'%(hasil.title, hasil.url, hasil.content))
         except:
-            Msg.reply_message('Yg Anda Cari Tidak Ada')
+            Msg.reply_message('❌ YG Anda Cari Tidak Ada ❌')
     elif chat.split('|')[0] == '#quotemaker':
         '''
         #quotemaker|<kata>|<author>|<kategori>
@@ -417,14 +478,15 @@ Tags :
             driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(result_scrap["thumb"]).content)), chat_id, "kusonime.jpg",result_scrap["info"])
             Msg.reply_message("Sinopsis:\n %s\nLink Download:\n %s"%(result_scrap["sinopsis"], result_scrap["link_dl"]))
         except:
-            Msg.reply("Anime : %s Tidak Ada"%(chat[7:]))
+            Msg.reply("❌ Anime : %s Tidak Ada ❌"%(chat[7:]))
     elif kpt == "#otakudesu":
         try:
             result_scrap=scrap_otakudesu(search_otakudesu(chat[11:]))
             driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(result_scrap["thumb"]).content)), chat_id, "OtakuDesu.jpg","%s\nSinopsis : %s"%(result_scrap["info"], result_scrap["sinopsis"]))
         except:
-            Msg.reply_message("Anime : %s Tidak Ada"%(chat[11:]))
+            Msg.reply_message("❌ Anime : %s Tidak Ada ❌"%(chat[11:]))
     elif kpt == '#film':
+        Chat.send_message("Sedang Mencari 🔎")
         hasil=gsearch('"%s" site:sdmovie.fun'%chat[5:])
         for i in hasil:
             if ('sdmovie' in i and 'google' not in i):
@@ -432,13 +494,11 @@ Tags :
                 hafun=fun(i)
                 for o in hafun['video']:
                     Link+=f"{o['url']} | {o['lewat']} | {o['sub']} | {o['res']} \n "
-                pesan='judul : %s\nrating: %s\nsinopsis : %s\n VIDEO :\n %s'%(hafun['title'],hafun['rating'],hafun['sinopsis'],Link)
+                pesan='🎬 : %s\nrating: %s\nsinopsis : %s\n VIDEO :\n %s'%(hafun['title'],hafun['rating'],hafun['sinopsis'],Link)
                 driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(hafun['cover']).content)), chat_id, "sdmovie.jpg",hafun["title"])
                 Chat.send_message(pesan)
     elif hashlib.md5(kpt.encode()).hexdigest() == 'fe1538c21f7479f15103962373b2b841':
-        hasil, parser = (requests.post('http://krypton.my.id/api.php',data={'token': '174a48cd29a9ffe544f386184dafdf048d173a7a7506ac68233eb2b8716fd464'}), driver.send_message_with_auto_preview)
-        if hasil.status_code == 200:
-            parser(chat_id, base64.b64decode(hasil.text).decode().split("|")[0], base64.b64decode(hasil.text).decode().split("|")[1])
+        driver.send_message_with_auto_preview(chat_id,"https://saweria.com/donate/KryptonByte" ,"📌Yuk Donasi Biar Bot Nya Aktif Terus Dan Mimin Nya Rajin Update & Fix Bug" )
     elif kpt == "#cara-penggunaan":
         Msg.reply_message('''*#help alat* -> menampilkan perintah alat
 *#sticker* -> pembuat sticker
