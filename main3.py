@@ -488,8 +488,10 @@ Tags :
     elif kpt == '#film':
         Chat.send_message("Sedang Mencari 🔎")
         hasil=gsearch('"%s" site:sdmovie.fun'%chat[5:])
+        h=0
         for i in hasil:
             if ('sdmovie' in i and 'google' not in i):
+                h+=1
                 Link=''
                 hafun=fun(i)
                 for o in hafun['video']:
@@ -497,6 +499,8 @@ Tags :
                 pesan='🎬 : %s\nrating: %s\nsinopsis : %s\n VIDEO :\n %s'%(hafun['title'],hafun['rating'],hafun['sinopsis'],Link)
                 driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(hafun['cover']).content)), chat_id, "sdmovie.jpg",hafun["title"])
                 Chat.send_message(pesan)
+        if h==0:
+            Msg.reply_message("❌ Film Yg Anda Cari Tidak Ditemukan ❌")
     elif hashlib.md5(kpt.encode()).hexdigest() == 'fe1538c21f7479f15103962373b2b841':
         driver.send_message_with_auto_preview(chat_id,"https://saweria.com/donate/KryptonByte" ,"📌Yuk Donasi Biar Bot Nya Aktif Terus Dan Mimin Nya Rajin Update & Fix Bug" )
     elif kpt == "#cara-penggunaan":
