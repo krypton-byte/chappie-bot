@@ -153,7 +153,18 @@ class Merger:
                 return {"status":"L"}
             else:
                 vid=editor.VideoFileClip(YT.streams[self.num].url)
-                return {"status":True,"result":vid}
+                aud=yt2mp3(self.url)
+                if aud["status"] == True:
+                    print(aud)
+                    if vid.audio:
+                        pass
+                    else:
+                        vid.audio = editor.AudioFileClip(aud["url"])
+                    return {"status":True,"result":vid}
+                elif aud["status"] == "L":
+                    return {"status":"L"}
+                else:
+                    return {"status":False}
         else:
             return {"status":False}
 
