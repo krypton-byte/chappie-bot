@@ -279,21 +279,20 @@ def replyCommand(Msg, Chat):
             except Exception as e:
                 Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
     elif kpt == "#delete":
-        try:
-            if "@g.us" in Msg.chat_id:
-                if Msg._js_obj["quotedMsgObj"]:
-                    id_ = Msg._js_obj["quotedMsgObj"]["id"]
-                    chat_id = Msg.chat_id
-                    if Msg.sender.id in [(x.id) for x in Chat.get_admins()]+author:
-                        driver.wapi_functions.deleteMessage(chat_id,id_,True)
-                    else:
-                        Msg.reply_message("Anda Bukan Admin Grup")
+        if "@g.us" in Msg.chat_id:
+            if Msg._js_obj["quotedMsgObj"]:
+                id_ = Msg._js_obj["quotedMsgObj"]["id"]
+                chat_id = Msg.chat_id
+                if Msg.sender.id in [(x.id) for x in Chat.get_admins()]+author:
+                    if not driver.wapi_functions.deleteMessage(chat_id,id_,True):
+                        Msg.reply_message("Hanya Pesan Bot Yg Bisa Di Hapus")
                 else:
-                    Msg.reply_message("Tag Pesan Bot Yg Ingin Di Hapus")
+                    Msg.reply_message("Anda Bukan Admin Grup")
             else:
-                Msg.reply_message("Hanya Berlaku Di Dalam Grup")
-        except:
-            Msg.reply_message("Hanya Pesan Bot Saja YG Bisa Di Hapus")
+                Msg.reply_message("Tag Pesan Bot Yg Ingin Di Hapus")
+        else:
+            Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+
 
     elif kpt == '#admin':
         try:
