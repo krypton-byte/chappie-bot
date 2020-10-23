@@ -41,11 +41,12 @@ from lib.anime import *
 from lib.ig import igdownload
 #-----------setting----------------------#
 tempChatBot={}
+author=["6283172366463@c.us"]
 wikipedia.set_lang('id')
 tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#sticker","#stiker","#fb","#kusonime","#otakudesu","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#joke","#bct"]
+FullCommand=["#help","#sticker","#stiker","#fb","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
 _Kasar=open("lib/badword.txt","r").read() 
 # kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
@@ -187,7 +188,7 @@ def replyCommand(Msg, Chat):
     elif kpt == '#intro':
         Msg.reply_message('🙋‍♂Hallo Saya Chappie-Bot Saya Di Bangun 🛠️ Dengan Bahasa Python3.8 🐍 Dan Beberapa API🔥')
     elif kpt in ['#menu','#help']:
-        Chat.send_message('''     🛠️ TOOLS 🛠️
+        Chat.send_message('''.    🛠️ TOOLS 🛠️
 -> #
 -> #sticker
 -> #upimg
@@ -232,6 +233,7 @@ def replyCommand(Msg, Chat):
 -> #admin
 -> #mentionall
 -> #unadmin
+-> #delete
 -> #kick
 -> #add
 -> #owner
@@ -243,7 +245,11 @@ def replyCommand(Msg, Chat):
 
      ☕ DUKUNGAN ☕
 -> #support
--> #intro''')
+-> #intro
+
+      & Author &
+-> #bc
+''')
     elif kpt == '#joke':
         _help, dat='''#joke <category> <flags>\ncategory:1:Programming\n         2:miscellaneous\n         3:dark\n         4:pun\nflags :1:nsfw\n       2:religious\n       3:political\n       4:racist\n       5:sexist''', {'flags':{'1':'nsfw','2':'religious','3':'political','4':'racist','5':'sexist'},'category':{'1':'Programming','2':'Miscellaneous','3':'Dark','4':'Pun'}}
         if(len(args) == 2 and args[0].isnumeric()) and (args[1].isnumeric()):
@@ -272,6 +278,23 @@ def replyCommand(Msg, Chat):
                 (Chat.remove_participant_group(i.replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
             except Exception as e:
                 Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
+    elif kpt == "#delete":
+        try:
+            if "@g.us" in Msg.chat_id:
+                if Msg._js_obj["quotedMsgObj"]:
+                    id_ = Msg._js_obj["quotedMsgObj"]["id"]
+                    chat_id = Msg.chat_id
+                    if Msg.sender.id in [(x.id) for x in Chat.get_admins()]+author:
+                        driver.wapi_functions.deleteMessage(chat_id,id_,True)
+                    else:
+                        Msg.reply_message("Anda Bukan Admin Grup")
+                else:
+                    Msg.reply_message("Tag Pesan Bot Yg Ingin Di Hapus")
+            else:
+                Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+        except:
+            Msg.reply_message("Hanya Pesan Bot Saja YG Bisa Di Hapus")
+
     elif kpt == '#admin':
         try:
             (Chat.promove_participant_admin_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#admin @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group')  if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
@@ -319,6 +342,13 @@ def replyCommand(Msg, Chat):
         driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']).content)), chat_id, "Neko.jpg","What Is This")
     elif kpt == '#doujin':
         doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
+    elif kpt == "#bc":
+        if Msg.sender.id == author[0]:
+            pesan="[[ Chappi-Bot Broadcast ]]\n%s"%(chat[4:].strip())
+            for i in driver.get_all_chat_ids():
+                driver.wapi_functions.sendMessage(i,pesan)
+        else:
+            Msg.reply_message("Anda Bukan Author")
     elif kpt == '#quote':
         try:
             hasil = json.loads(requests.get('http://api.quotable.io/random',params={'tags':args[0]}).text) if args else json.loads(requests.get('http://api.quotable.io/random').text)
