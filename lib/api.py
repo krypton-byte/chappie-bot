@@ -149,7 +149,7 @@ class Merger:
     def down(self):
         YT=pytube.YouTube(self.url)
         if len(YT.streams) > self.num:
-            if YT.streams[self.num].filesize > 20971520:
+            if YT.streams[self.num].filesize > 10485760: #max 10 mencegah limit
                 return {"status":"L"}
             else:
                 vid=editor.VideoFileClip(YT.streams[self.num].url)
