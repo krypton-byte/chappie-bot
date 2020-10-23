@@ -622,10 +622,16 @@ if __name__ == '__main__':
         while True:
             if driver.is_logged_in():
                 with ThreadPoolExecutor(max_workers=2) as executor:
-                    executor.submit(main)
+                    try:
+                        executor.submit(main)
+                    except selenium.common.exceptions.InvalidSessionIdException:
+                        pass
     else:
         while True:
             if driver.is_logged_in():
                 open("pickle.txt","wb").write(pickle.dumps(driver.get_local_storage()))
                 with ThreadPoolExecutor(max_workers=2) as executor:
-                    executor.submit(main)
+                    try:
+                        executor.submit(main)
+                    except selenium.common.exceptions.InvalidSessionIdException:
+                        pass
