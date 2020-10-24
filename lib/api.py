@@ -97,14 +97,16 @@ def yt2mp3(urlyt):
         size=0
         ret='judul : %s\nDilihat : %s'%(hasilObj.title, hasilObj.views)
         for i in hasilObj.streams:
-            if i.mime_type == 'audio/mp4':
+            if i.type == "audio" and i.abr == "160kbps":
                 url=i.url
                 size=i.filesize
         if size > 20971520: #max 20mb
             return {"status":"Large"}
         return {"status":True,"info":ret,"url":url}
-    except Exception:
-        return {"Status":False}
+    except pytube.exceptions.RegexMatchError:
+        return {"status":"url"}
+    except KeyError:
+        return {"status":"ulang"}
 def bacot(chat):
     '''
     chat : String
@@ -133,12 +135,17 @@ class Merger:
         self.url = url
         self.num = num
     def parser(self):
-        YT=pytube.YouTube(self.url)
-        pesan="Judul : %s\n"%YT.title
-        for i in enumerate(YT.streams):
-            if i[1].type == "video":
-                pesan+="%s. Res: %s Fps: %s\n"%(i[0],i[1].resolution, i[1].fps)
-        return pesan
+        try:
+            YT=pytube.YouTube(self.url)
+            pesan="Judul : %s\n"%YT.title
+            for i in enumerate(YT.streams):
+                if i[1].type == "video":
+                    pesan+="%s. Res: %s Fps: %s\n"%(i[0],i[1].resolution, i[1].fps)
+            return {"status":True,"result":pesan}
+        except pytube.exceptions.RegexMatchError:
+            return {"status":"url"}
+        except KeyError:
+            return {"status":"ulang"}
     def ytmp3(self):
         YT=pytube.YouTube(self.url)
         for i in YT.streams:
@@ -147,26 +154,30 @@ class Merger:
         aud=editor.AudioFileClip(audio.url)
         return aud
     def down(self):
-        YT=pytube.YouTube(self.url)
-        if len(YT.streams) > self.num:
-            if YT.streams[self.num].filesize > 10485760: #max 10 mencegah limit
-                return {"status":"L"}
-            else:
-                vid=editor.VideoFileClip(YT.streams[self.num].url)
-                aud=yt2mp3(self.url)
-                if aud["status"] == True:
-                    print(aud)
-                    if vid.audio:
-                        pass
-                    else:
-                        vid.audio = editor.AudioFileClip(aud["url"])
-                    return {"status":True,"result":vid}
-                elif aud["status"] == "L":
+        try:
+            YT=pytube.YouTube(self.url)
+            if len(YT.streams) > self.num:
+                if YT.streams[self.num].filesize > 20971520: #max 20 mencegah limit
                     return {"status":"L"}
                 else:
-                    return {"status":False}
-        else:
-            return {"status":False}
+                    vid=editor.VideoFileClip(YT.streams[self.num].url)
+                    if vid.audio:
+                        vid.audio = vid.audio
+                    else:
+                        while True:
+                            aud=yt2mp3(self.url)
+                            print(aud)
+                            if aud["status"] == True:
+                                vid.audio = editor.AudioFileClip(aud["url"])
+                                break
+                    return {"status":True,"result":vid}
+            else:
+                return {"status":False}
+        except pytube.exceptions.RegexMatchError:
+            return {"status":"url"}
+        except KeyError:
+            return {"status":"ulang"}
+
 
 def WhatAnimeIsThis(fn):
     '''

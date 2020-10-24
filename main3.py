@@ -381,7 +381,10 @@ Tags :
             Msg.reply_message('Tags Tidak Ada')
     elif kpt == '#yt2mp3':
         if args:
-            has=yt2mp3(args[0])
+            while True:
+                has=yt2mp3(args[0])
+                if not has["status"] == "ulang":
+                    break
             if has["status"] == "Large":
                 Msg.reply_message("Ukuran File Melebihi Batas Maksimal")
             elif has["status"] == True:
@@ -398,22 +401,43 @@ Tags :
             Msg.reply_message("Masukan Url")
     elif kpt == '#yt':
         if len(args) == 2:
+            print("Pilih")
             if args[1].isnumeric():
-                dow=Merger(args[0], int(args[1])).down()
-                if dow["status"] == "L":
-                    Msg.reply_message("Ukuran File Melebihi Batas")
-                elif dow["status"] == True:
-                    Chat.send_message("Merging 🛠️")
-                    dow["result"].write_videofile("cache/%s.mp4"%ran)
-                    Chat.send_message("Sedang Mengunggah⏳")
-                    driver.send_media("cache/%s.mp4"%ran, chat_id, "")
-                    os.remove("cache/%s.mp4"%ran)
-                else:
-                    Msg.reply_message(Merger(args[0]).parser())
+                while True:
+                    print("True")
+                    dow=Merger(args[0], int(args[1])).down()
+                    print(dow)
+                    if dow["status"] == True:
+                        Chat.send_message("Merging 🛠️")
+                        dow["result"].write_videofile("cache/%s.mp4"%ran)
+                        Chat.send_message("Sedang Mengunggah⏳")
+                        driver.send_media("cache/%s.mp4"%ran, chat_id, "")
+                        os.remove("cache/%s.mp4"%ran)
+                        break
+                    elif dow["status"] == "L":
+                        Msg.reply_message("Ukuran File Melebihi Batas")
+                        break
+                    elif dow["status"] == "url":
+                        Msg.reply_message("Tautan Tidak Valid")
+                        break
+                    elif dow["status"] == "ulang":
+                        print(dow)
+                    print(dow)
+        
             else:
-                Msg.reply_message(Merger(args[0]).parser())
+                Msg.reply_message("Perintah Salah")
         else:
-            Msg.reply_message(Merger(args[0]).parser())
+            if args:
+                while True:
+                    print("Loop")
+                    paser=Merger(args[0]).parser()
+                    if not paser["status"] == "ulang":
+                        Msg.reply_message(paser["result"])
+                        break
+                if paser["status"] == "url":
+                    Msg.reply_message("Tautan Tidak Valid")
+            else:
+                Msg.reply_message("Masukan Tautan Video")
     elif kpt == '#gambar':
         driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get('https://source.unsplash.com/1600x900/?%s'%(args[0]) if args else 'https://source.unsplash.com/random').content)), chat_id, "Image.jpeg", "Apakah Kamu Suka ?")
     elif kpt == '#mentionall':
