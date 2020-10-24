@@ -38,7 +38,7 @@ from lib.brainly2 import *
 from lib.nulis import tulis
 from lib.fb import fbvid
 from lib.anime import *
-from lib.ig import igdownload
+from lib.ig import igdownload, igstalker
 #-----------setting----------------------#
 tempChatBot={}
 author=["6283172366463@c.us"]
@@ -46,7 +46,7 @@ wikipedia.set_lang('id')
 tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#sticker","#stiker","#fb","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
+FullCommand=["#help","#igstalk","#sticker","#stiker","#fb","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
 _Kasar=open("lib/badword.txt","r").read() 
 # kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
 import sqlite3
@@ -136,6 +136,23 @@ def replyCommand(Msg, Chat):
         else:
             pyqrcode.create(chat.replace(kpt+' ','')).png('cache/bar.png', scale=6)
             driver.send_media('cache/bar.png',chat_id,'text : %s'%(chat.replace(kpt,'')))
+    elif kpt == "#igstalk":
+        if args:
+            Chat.send_message("Sedang Mencari 🔍")
+            userProperty=igstalker(args[0].replace("@",""))
+            if userProperty:
+                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(userProperty["pic"]).content)), chat_id, "stalk.jpg", f'''
+Nama Pengguna : {userProperty["username"]}
+Mengikuti     : {userProperty["following"]}
+Di Ikuti      : {userProperty["follower"]}
+Jumlah Post   : {userProperty["post"]}
+============BIO===========
+{userProperty["bio"]}
+''')
+            else:
+                Msg.reply_message("Nama Pengguna Tidak Ada ❌")
+        else:
+            Msg.reply_message("Masukan Nama Pengguna Yg Ingin Di Stalk")
     elif kpt == '#qrreader':
         rep=GetRepMedia(Msg)
         if rep.type == "image":
@@ -193,26 +210,27 @@ def replyCommand(Msg, Chat):
 -> #sticker
 -> #upimg
 -> #ig
--> #fb
--> #cari
--> #qrmaker
+-> #igstalk [User]
+-> #fb [Tautan Video]
+-> #cari [Kata Kunci]
+-> #qrmaker [Teks]
 -> #qrreader
--> #?
+-> #? [Soal]
 -> #wait
--> #tulis
+-> #tulis [Teks]
 -> #ocr
--> #url2png
--> #run
--> #doujin
--> #film
--> #kusonime
--> #otakudesu
+-> #url2png [Tautan]
+-> #run [Syntak]
+-> #doujin [Kode Nuklir]
+-> #film [Judul Film]
+-> #kusonime [Judul Anime]
+-> #otakudesu [Judul Anime]
 -> #ts [cc] [text]
 -> #tts [cc] [text]
--> #quotemaker
--> #yt2mp3
--> #yt
--> #wiki
+-> #quotemaker|[quote]|[author]|[theme]
+-> #yt2mp3 [Tautan Youtube]
+-> #yt [Tautan Youtube]
+-> #wiki [Kata Kunci]
 
      🕹️HIBURAN 🕹️
 
@@ -232,10 +250,10 @@ def replyCommand(Msg, Chat):
 -> #list-admin
 -> #admin
 -> #mentionall
--> #unadmin
--> #delete
--> #kick
--> #add
+-> #unadmin @tag
+-> #delete @tag
+-> #kick @tag
+-> #add 62xxxx
 -> #owner
 -> #linkgroup
 -> #revoke
@@ -248,7 +266,7 @@ def replyCommand(Msg, Chat):
 -> #intro
 
       & Author &
--> #bc
+-> #bc [Teks]
 ''')
     elif kpt == '#joke':
         _help, dat='''#joke <category> <flags>\ncategory:1:Programming\n         2:miscellaneous\n         3:dark\n         4:pun\nflags :1:nsfw\n       2:religious\n       3:political\n       4:racist\n       5:sexist''', {'flags':{'1':'nsfw','2':'religious','3':'political','4':'racist','5':'sexist'},'category':{'1':'Programming','2':'Miscellaneous','3':'Dark','4':'Pun'}}

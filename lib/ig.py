@@ -1,6 +1,6 @@
-'''
+"""
 @author : Krypton Byte
-'''
+"""
 import requests
 def igdownload(url):
     req=requests.get(url, params={"__a":1})
@@ -17,3 +17,18 @@ def igdownload(url):
             return {"status":True,"result":[{"type":"image","url":media["display_resources"][-1]["src"]}]}
     else:
         return {"status":False}
+def igstalker(user):
+    stalk=requests.get(f"https://www.instagram.com/{user}/",params={"__a":1}).json()
+    if stalk:
+        userProperty=stalk["graphql"]["user"]
+        return {
+            "pic":userProperty["profile_pic_url_hd"],
+            "username":userProperty["username"],
+            "follower":userProperty["edge_followed_by"]["count"],
+            "following":userProperty["edge_follow"]["count"],
+            "bio":userProperty["biography"],
+            "post":userProperty["edge_owner_to_timeline_media"]["count"]
+
+        }
+    else:
+        return {}
