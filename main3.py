@@ -6,7 +6,7 @@
 " Wahai Orang-orang Yg Beriman Mengapakah Kamu Mengatakan Sesuatu Yg Tidak Kamu Kerjakan? Amat Besar Kebencian Di Sisi Allah Bahwa Kamu Mengatakan Apa-apa Yang Tidak Kmau Kerjakan." (QS asg-shaff: 2-3)
 """
 
-kasar=[]
+from typing import ChainMap
 from requests.api import request
 from os import remove
 from openwa.helper import convert_to_base64
@@ -14,6 +14,7 @@ from openwa import WhatsAPIDriver
 from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
 from moviepy import editor
+import sqlite3
 from lib import pytube
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC, TIT2
@@ -40,6 +41,7 @@ from lib.brainly2 import *
 from lib.nulis import tulis
 from lib.fb import fbvid
 from lib.anime import *
+from data import Change
 from lib.ig import igdownload, igstalker
 #-----------setting----------------------#
 tempChatBot={}
@@ -48,10 +50,9 @@ wikipedia.set_lang('id')
 tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#help","#igstalk","#sticker","#stiker","#fb","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
-_Kasar=open("lib/badword.txt","r").read() 
-# kasar=open("lib/badword.txt","r").read() #hapus hastag untuk mengaktifkan Anti Toxic Dalam grup
-import sqlite3
+FullCommand=["#notoxic","#grup","#nsfw","#help","#igstalk","#sticker","#stiker","#fb","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
+Kasar=open("lib/badword.txt","r").read().splitlines()
+isAdmin=lambda _:list(set(_.split()) & set(driver.wapi_functions.iAmAdmin()))
 class GetRepMedia:
     def __init__(self, js):
         self.obj = js._js_obj["quotedMsg"]
@@ -67,33 +68,37 @@ def main():
             for chatObject in chatTextObject:
                 for TextObject in chatObject.messages:
                     if TextObject.type == 'chat':
-                        if set(TextObject.content.lower().split(' '))&set(kasar): #anda Bisa mengaktifkan Anti Toxic
+                        if set(TextObject.content.lower().split(' '))&set(Kasar):
                             if '@g.us' in TextObject.chat_id:
-                                try:
-                                    ksr=Kasar(TextObject.chat_id)
-                                    ksr.add_check_kick(chatObject.chat, TextObject)
-                                except Exception as e:
-                                    False
-                        elif TextObject.content.split()[0] in FullCommand or TextObject.content.split('|')[0] in FullCommand:
+                                cek=Change(chatObject.chat.id, TextObject.sender.id)
+                                if cek.switch():
+                                    if cek.count() >= cek.maxCount():
+                                        chatObject.chat.send_message("Terpaksa Saya Mengkick Anda Karna Anda Melanggar Peraturan")
+                                        chatObject.chat.remove_participant_group(TextObject.sender.id)
+                                    else:
+                                        cek.Tambah()
+                                        chatObject.chat.send_message(f"Saya Telah Memperingati Anda Sebanyak : {cek.count()}")
+                        if TextObject.content.split()[0] in FullCommand or TextObject.content.split('|')[0] in FullCommand:
                             executor.submit(replyCommand, (TextObject),(chatObject.chat))
-                        elif TextObject.content.split()[0] != '#' and '@g.us' != TextObject.chat_id:
+                        elif '@g.us' != TextObject.chat_id:
                             if '@c.us' in TextObject.chat_id:
                                 TextObject.reply_message(chatbot(TextObject.content))
                     elif TextObject.type == 'image':
                         executor.submit(recImageReplyCommand, (TextObject),(chatObject.chat))
                     elif TextObject.type == 'vcard':
-                        masuk='SELAMAT DATANG :\n'
-                        for i in TextObject.contacts:
-                            for u in re.findall('waid\=(.*?):',i.decode()):
-                                try:
-                                    chatObject.chat.add_participant_group('%s@c.us'%(u))
-                                    masuk+='-@%s'%(u)
-                                except Exception:
-                                    TextObject.reply_message('Menambahkan %s Sukses'%(u))
-                        try:
-                            driver.wapi_functions.sendMessageWithMentions(chatObject.chat.id,masuk,'')
-                        except Exception:
-                            False    
+                        if isAdmin(chatObject.chat.id):
+                            masuk='SELAMAT DATANG :\n'
+                            for i in TextObject.contacts:
+                                for u in re.findall('waid\=(.*?):',i.decode()):
+                                    try:
+                                        chatObject.chat.add_participant_group('%s@c.us'%(u))
+                                        masuk+='-@%s'%(u)
+                                    except Exception:
+                                        TextObject.reply_message('Menambahkan %s Sukses'%(u))
+                            try:
+                                driver.wapi_functions.sendMessageWithMentions(chatObject.chat.id,masuk,'')
+                            except Exception:
+                                False    
 def recImageReplyCommand(Msg, Chat):
     caption = Msg.caption
     args=caption.split()[1:]
@@ -169,15 +174,19 @@ Jumlah Post   : {userProperty["post"]}
             res=WhatAnimeIsThis("cache/%s.jpg"%ran)
             driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), chat_id, "wait.mp4", res["hasil"]) if res["status"] else Msg.reply_message("Gagal di cari")
             os.remove("cache/%s.jpg"%ran)
+    elif kpt == "#grup":
+         if '@g.us' in Msg.chat_id:
+            cek=Change(Chat.id)
+            driver.wapi_functions.sendImage(convert_to_base64(BytesIO(driver.get_profile_pic_from_id(Chat.id))), chat_id, "Image.jpg",f"""Nama : {Chat.name}\nNsfw : {"Aktif" if cek.nsfwX() else "Nonaktif"}\nAntiToxic : {"Aktif" if cek.switch() else "Nonaktif"}\nMax : {cek.maxCount() if cek.switch() else "0"}""")
+         else:
+            Msg.reply_message("Hanya Berlaku Di Dalam Grup")
     elif kpt == "#tulis":
         tulisan=tulis(chat[7:])
         for i in tulisan:
             ran=secrets.token_hex(7)
-            print("ran")
             i.save("cache/%s.jpg"%ran)
             driver.send_media("cache/%s.jpg"%ran, chat_id,"Berhasil Ditulis 📝")
             os.remove("cache/%s.jpg"%ran)
-            print("Berhasil Di Tulis")
     elif kpt == "#upimg":
         rep=GetRepMedia(Msg)
         if rep.type == "image":
@@ -235,7 +244,6 @@ Jumlah Post   : {userProperty["post"]}
 -> #wiki [Kata Kunci]
 
      🕹️HIBURAN 🕹️
-
 -> #dog
 -> #neko
 -> #quote
@@ -248,7 +256,6 @@ Jumlah Post   : {userProperty["post"]}
     
 
      👁️‍🗨️   GRUP   👁️‍🗨️
-
 -> #list-admin
 -> #admin
 -> #mentionall
@@ -257,8 +264,11 @@ Jumlah Post   : {userProperty["post"]}
 -> #kick @tag
 -> #add 62xxxx
 -> #owner
+-> #grup
 -> #linkgroup
 -> #revoke
+-> #nsfw [1|0]
+-> #notoxic [1|0] s/d
 
      🗣️  BANTUAN 🗣️
 -> #cara-penggunaan
@@ -269,6 +279,7 @@ Jumlah Post   : {userProperty["post"]}
 
       & Author &
 -> #bc [Teks]
+
 ''')
     elif kpt == '#joke':
         _help, dat='''#joke <category> <flags>\ncategory:1:Programming\n         2:miscellaneous\n         3:dark\n         4:pun\nflags :1:nsfw\n       2:religious\n       3:political\n       4:racist\n       5:sexist''', {'flags':{'1':'nsfw','2':'religious','3':'political','4':'racist','5':'sexist'},'category':{'1':'Programming','2':'Miscellaneous','3':'Dark','4':'Pun'}}
@@ -292,10 +303,64 @@ Jumlah Post   : {userProperty["post"]}
             Msg.reply_message(bacot(chat[5:]))
         except:
             Msg.reply_message('masukan Text')
-    elif kpt == '#kick': #for Admin
+    elif kpt == "#nsfw":
+        if Msg.sender.id in [(x.id) for x in Chat.get_admins()]:
+            if isAdmin(Chat.id):
+                if args[0].isnumeric():
+                    ns=Change(Chat.id)
+                    if int(args[0]) == 1:
+                        if ns.idGrup():
+                            ns=Change(Chat.id, nsfw=1)
+                            ns.nsfwEdit()
+                            Chat.send_message("Mengaktifkan NSFW Berhasil")
+                        else:
+                            ns=Change(Chat.id, nsfw=1, switchInt=0)
+                            ns.switchEdit()
+                            ns.nsfwEdit()
+                            Chat.send_message("Mengaktifkan NSFW Berhasil")
+                    elif int(args[0]) == 0:
+                        ns=Change(Chat.id, nsfw=0)
+                        ns.nsfwEdit()
+                        Chat.send_message("Menonaktifkan NSFW Berhasil")
+                    else:
+                        Chat.send_message("Masukan 1 untuk *mengaktifkan* dan 0 untuk *menonaktifkan*")
+                else:
+                    Chat.send_message("Masukan 1 untuk *mengaktifkan* dan 0 untuk *menonaktifkan*")
+            else:
+                Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+        else:
+            Msg.reply_message('Anda Bukan Admin Group')
+                
+    elif kpt == "#notoxic":
+        if Msg.sender.id in [(x.id) for x in Chat.get_admins()]:
+            if isAdmin(Chat.id):
+                if int(args[0]) == 1:
+                    if len(args) == 2:
+                        if args[1].isnumeric():
+                            alert=Change(Chat.id, maxint=int(args[1]), switchInt=1)
+                            alert.switchEdit()
+                            Chat.send_message(f"Menyetel Anti Toxic dengan maksimal {args[1]} Peringatan Berhasil")
+                        else:
+                            Chat.send_message("Masukan Jumlah Max peringatan")
+                    else:
+                        Chat.send_message("Masukan Jumlah Max peringatan")
+                elif int(args[0]) == 0:
+                    alert=Change(Chat.id, switchInt=0)
+                    alert.switchEdit()
+                    Chat.send_message("Menonaktifkan Anti Toxic Berhasil")
+                else:
+                    Chat.send_message("Masukan 1 untuk *mengaktifkan* dan 0 untuk *menonaktifkan*")
+            else:
+                Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+        else:
+            Msg.reply_message('Anda Bukan Admin Group')
+    elif kpt == '#kick':
         for i in args:
             try:
-                (Chat.remove_participant_group(i.replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+                if isAdmin(Chat.id):
+                    (Chat.remove_participant_group(i.replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+                else:
+                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
             except Exception as e:
                 Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
     elif kpt == "#delete":
@@ -316,27 +381,57 @@ Jumlah Post   : {userProperty["post"]}
 
     elif kpt == '#admin':
         try:
-            (Chat.promove_participant_admin_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#admin @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group')  if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+            if '@g.us' in Msg.chat_id:
+                if isAdmin(Chat.id):
+                    (Chat.promove_participant_admin_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#admin @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group')
+                else:
+                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+            else:
+                Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
             Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
     elif kpt == '#unadmin':
         try:
-            (Chat.demote_participant_admin_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#unadmin 62xxxxx')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+            if '@g.us' in Msg.chat_id:
+                if isAdmin(Chat.id):
+                    (Chat.demote_participant_admin_group(args[0].replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#unadmin 62xxxxx')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group')
+                else:
+                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+            else:
+                 Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
             Msg.reply_message('Terjadi Kesalahan\ndetail : %s'%(e))
     elif kpt == '#revoke':
         try:
-            (Chat.send_message('Tautan Grup Berhasil Ditarik') if driver.wapi_functions.revokeGroupInviteLink(Msg.chat_id) else Chat.send_message('Tautan Grup Gagal Ditarik')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+            if '@g.us' in Msg.chat_id:
+                if isAdmin(Chat.id):
+                    (Chat.send_message('Tautan Grup Berhasil Ditarik') if driver.wapi_functions.revokeGroupInviteLink(Msg.chat_id) else Chat.send_message('Tautan Grup Gagal Ditarik')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin Group')
+                else:
+                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+            else:
+                Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
             Chat.send_message('Terjadi kesalahan\ndetail : %s'%(e))
     elif kpt == '#add':
         try:
-            ((Msg.reply_message('Berhasil Ditambahkan') if Chat.add_participant_group(args[0]+'@c.us') else Msg.reply_message('Gagal Ditambahkan')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Gagal Di Tambahkan')) if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+            if '@g.us' in Msg.chat_id:
+                if isAdmin(Chat.id):
+                    ((Msg.reply_message('Berhasil Ditambahkan') if Chat.add_participant_group(args[0]+'@c.us') else Msg.reply_message('Gagal Ditambahkan')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Gagal Di Tambahkan'))
+                else:
+                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+            else:
+                Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
             Msg.reply_message('Terjadi kesalahan\ndetail : %s'%(e))
     if kpt == '#linkgroup':
         try:
-            Msg.reply_message(driver.wapi_functions.getGroupInviteLink(Msg.chat_id)) if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+            if '@g.us' in Msg.chat_id:
+                if isAdmin(Chat.id):
+                    Msg.reply_message(driver.wapi_functions.getGroupInviteLink(Msg.chat_id))
+                else:
+                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+            else:
+                Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except:
             Msg.reply_message('Angkat Bot ini Menjadi Admin Dulu')
     elif kpt == '#list-admin':
@@ -360,7 +455,13 @@ Jumlah Post   : {userProperty["post"]}
     elif kpt == '#neko':
         driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(json.loads(requests.get('http://api.thecatapi.com/v1/images/search').text)[0]['url']).content)), chat_id, "Neko.jpg","What Is This")
     elif kpt == '#doujin':
-        doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
+        if "@g.us" in Msg.chat_id:
+            if Change(Chat.id).nsfwX():
+                doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
+            else:
+                Msg.reply_message("Mode Nsfw Nonaktif Atau Anda Bisa Chat Pribadi Dengan Saya")
+        else:
+            doujin(args[0], driver, chat_id, Msg) if args else Msg.reply_message('Masukan Kode Nuklir')
     elif kpt == "#bc":
         if Msg.sender.id == author[0]:
             pesan="[[ Chappi-Bot Broadcast ]]\n%s"%(chat[4:].strip())
@@ -408,12 +509,9 @@ Tags :
             Msg.reply_message("Masukan Url")
     elif kpt == '#yt':
         if len(args) == 2:
-            print("Pilih")
             if args[1].isnumeric():
                 while True:
-                    print("True")
                     dow=Merger(args[0], int(args[1])).down()
-                    print(dow)
                     if dow["status"] == True:
                         Chat.send_message("Merging 🛠️")
                         dow["result"].write_videofile("cache/%s.mp4"%ran)
@@ -429,14 +527,12 @@ Tags :
                         break
                     elif dow["status"] == "ulang":
                         print(dow)
-                    print(dow)
         
             else:
                 Msg.reply_message("Perintah Salah")
         else:
             if args:
                 while True:
-                    print("Loop")
                     paser=Merger(args[0]).parser()
                     if not paser["status"] == "ulang":
                         Msg.reply_message(paser["result"])
@@ -528,18 +624,12 @@ Tags :
         else:
             Msg.reply_message('masukan Url \n#url2png https://google.com')
     elif kpt == '#ig':
-        print("ig")
         ob=igdownload(args[0])
-        print("Yup")
         if ob["status"]:
-            print("True")
             for i in ob["result"]:
-                print("Loop")
                 if i["type"] == "image":
-                    print("image")
                     driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(i["url"]).content)), chat_id,"ig.jpg","")
                 elif i["type"] == "video":
-                    print("vid")
                     driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(i["url"]).content)), chat_id,"ig.mp4","")
         else:
             Msg.reply_message("Link Error")
