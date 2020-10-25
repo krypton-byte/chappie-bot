@@ -15,6 +15,8 @@ from urllib.parse import quote, unquote
 from bs4 import BeautifulSoup as bs
 from moviepy import editor
 from lib import pytube
+from mutagen.mp3 import MP3
+from mutagen.id3 import ID3, APIC, TIT2
 from googletrans import Translator
 import time, base64, os,pickle, hashlib, random, subprocess, sqlite3, wikipedia, re,secrets , pyqrcode, hashlib, json, requests
 from gtts import gTTS
@@ -391,9 +393,14 @@ Tags :
                 aud=editor.AudioFileClip(has["url"])
                 Chat.send_message("🛠️Sedang Mengkonversi Ke Audio 🛠️")
                 aud.write_audiofile("cache/%s.mp3"%ran)
+                Chat.send_message("🔖Menambahkan Metadata🔖")
+                audio=MP3("cache/%s.mp3"%ran, ID3=ID3)
+                audio["TIT2"] = TIT2(encoding=3, text=has["judul"])
+                audio["APIC"] = APIC(mime="image/jpg",type=3, data=requests.get(has["thumb"]).content)
+                audio.save()
                 Chat.send_message("Sedang Mengunggah⏳")
+                driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(has["thumb"]).content)), chat_id,"thumb.jpg",has["info"])
                 driver.send_media("cache/%s.mp3"%ran, chat_id, "")
-                Msg.reply_message(has["info"])
                 os.remove("cache/%s.mp3"%ran)
             else:
                 Msg.reply_message("Link Video Tidak Valid")

@@ -102,7 +102,7 @@ def yt2mp3(urlyt):
                 size=i.filesize
         if size > 20971520: #max 20mb
             return {"status":"Large"}
-        return {"status":True,"info":ret,"url":url}
+        return {"status":True,"info":ret,"url":url,"thumb":hasilObj.thumbnail_url,"judul":hasilObj.title}
     except pytube.exceptions.RegexMatchError:
         return {"status":"url"}
     except KeyError:
