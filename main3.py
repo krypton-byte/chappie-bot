@@ -97,7 +97,7 @@ def main():
                                         TextObject.reply_message('Menambahkan %s Sukses'%(u))
                             try:
                                 driver.wapi_functions.sendMessageWithMentions(chatObject.chat.id,masuk,'')
-                            except Exception:
+                            except selenium.common.exceptions.InvalidSessionIdException:
                                 False    
 def recImageReplyCommand(Msg, Chat):
     caption = Msg.caption
@@ -355,14 +355,17 @@ Jumlah Post   : {userProperty["post"]}
         else:
             Msg.reply_message('Anda Bukan Admin Group')
     elif kpt == '#kick':
-        for i in args:
-            try:
-                if isAdmin(Chat.id):
-                    (Chat.remove_participant_group(i.replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
-                else:
-                    Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
-            except Exception as e:
-                Msg.reply_message('Terdapat Error\ndetail : %s'%(e))
+        if "@g.us" in Msg.chat_id:
+            for i in args:
+                try:
+                    if isAdmin(Chat.id):
+                        (Chat.remove_participant_group(i.replace('@','')+'@c.us') if len(args) == 1 else Msg.reply_message('#kick @tag')) if Msg.sender.id in [(x.id) for x in Chat.get_admins()] else Msg.reply_message('Anda Bukan Admin') if '@g.us' in Msg.chat_id else Msg.reply_message("Hanya Berlaku Di Dalam Grup")
+                    else:
+                        Chat.send_message("Jadikan Saya Menjadi Admin Terlebih Dahulu")
+                except Exception as e:
+                    Msg.reply_message("Kick Gagal")
+        else:
+            Msg.reply_message("Hanya Berlaku Di Dalam Grup")
     elif kpt == "#delete":
         if "@g.us" in Msg.chat_id:
             if Msg._js_obj["quotedMsgObj"]:
@@ -400,7 +403,7 @@ Jumlah Post   : {userProperty["post"]}
             else:
                  Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
-            Msg.reply_message('Terjadi Kesalahan\ndetail : %s'%(e))
+            Msg.reply_message("UnAdmin Gagal")
     elif kpt == '#revoke':
         try:
             if '@g.us' in Msg.chat_id:
@@ -411,7 +414,7 @@ Jumlah Post   : {userProperty["post"]}
             else:
                 Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
-            Chat.send_message('Terjadi kesalahan\ndetail : %s'%(e))
+            Chat.send_message("Menarik Tautan Gagal")
     elif kpt == '#add':
         try:
             if '@g.us' in Msg.chat_id:
@@ -422,7 +425,7 @@ Jumlah Post   : {userProperty["post"]}
             else:
                 Msg.reply_message("Hanya Berlaku Di Dalam Grup")
         except Exception as e:
-            Msg.reply_message('Terjadi kesalahan\ndetail : %s'%(e))
+            Msg.reply_message('#add 628xxxxxxx')
     if kpt == '#linkgroup':
         try:
             if '@g.us' in Msg.chat_id:
