@@ -40,6 +40,7 @@ from lib.kasar import *
 from lib.brainly2 import *
 from lib.nulis import tulis
 from lib.fb import fbvid
+from lib2 import desain
 from lib.anime import *
 from data import Change
 from lib.ig import igdownload, igstalker
@@ -50,7 +51,7 @@ wikipedia.set_lang('id')
 tra=Translator()
 global driver
 driver=WhatsAPIDriver(client='Chrome')
-FullCommand=["#notoxic","#grup","#nsfw","#help","#igstalk","#sticker","#stiker","#fb","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
+FullCommand=["#notoxic","#grup","#nsfw","#help","#igstalk","#sticker","#stiker","#fb","#quote1","#kusonime","#otakudesu","#delete","#upimg","#ig","#cari","#support","#cara-penggunaan","#tulis","#waifu","#qrmaker","#gambar","#intro","#kitsune","#qrreader","#?","#wait","#url2png","#run","#ocr","#doujin","#film","#nime","#ts","#cc","#tts","#quotemaker","#yt2mp3","#yt","#wiki","#list-admin","#admin","#unadmin","#kick","#add","#owner","#linkgroup","#revoke","#dog","#mentionall","#neko","#quote","gambar","#","#bc","#joke","#bct"]
 Kasar=open("lib/badword.txt","r").read().splitlines()
 isAdmin=lambda _:list(set(_.split()) & set(driver.wapi_functions.iAmAdmin()))
 class GetRepMedia:
@@ -63,42 +64,42 @@ class GetRepMedia:
 def main():
     with ThreadPoolExecutor(max_workers=8) as executor:
         while True:
-            task=[]
-            chatTextObject=driver.get_unread()
-            for chatObject in chatTextObject:
-                for TextObject in chatObject.messages:
-                    if TextObject.type == 'chat':
-                        if set(TextObject.content.lower().split(' '))&set(Kasar):
-                            if '@g.us' in TextObject.chat_id:
-                                cek=Change(chatObject.chat.id, TextObject.sender.id)
-                                if cek.switch():
-                                    if cek.count() >= cek.maxCount():
-                                        chatObject.chat.send_message("Terpaksa Saya Mengkick Anda Karna Anda Melanggar Peraturan")
-                                        chatObject.chat.remove_participant_group(TextObject.sender.id)
-                                    else:
-                                        cek.Tambah()
-                                        chatObject.chat.send_message(f"Saya Telah Memperingati Anda Sebanyak : {cek.count()}")
-                        if TextObject.content.split()[0] in FullCommand or TextObject.content.split('|')[0] in FullCommand:
-                            executor.submit(replyCommand, (TextObject),(chatObject.chat))
-                        elif '@g.us' != TextObject.chat_id:
-                            if '@c.us' in TextObject.chat_id:
-                                TextObject.reply_message(chatbot(TextObject.content))
-                    elif TextObject.type == 'image':
-                        executor.submit(recImageReplyCommand, (TextObject),(chatObject.chat))
-                    elif TextObject.type == 'vcard':
-                        if isAdmin(chatObject.chat.id):
-                            masuk='SELAMAT DATANG :\n'
-                            for i in TextObject.contacts:
-                                for u in re.findall('waid\=(.*?):',i.decode()):
-                                    try:
-                                        chatObject.chat.add_participant_group('%s@c.us'%(u))
-                                        masuk+='-@%s'%(u)
-                                    except Exception:
-                                        TextObject.reply_message('Menambahkan %s Sukses'%(u))
-                            try:
+            try:
+                task=[]
+                chatTextObject=driver.get_unread()
+                for chatObject in chatTextObject:
+                    for TextObject in chatObject.messages:
+                        if TextObject.type == 'chat':
+                            if set(TextObject.content.lower().split(' '))&set(Kasar):
+                                if '@g.us' in TextObject.chat_id:
+                                    cek=Change(chatObject.chat.id, TextObject.sender.id)
+                                    if cek.switch():
+                                        if cek.count() >= cek.maxCount():
+                                            chatObject.chat.send_message("Terpaksa Saya Mengkick Anda Karna Anda Melanggar Peraturan")
+                                            chatObject.chat.remove_participant_group(TextObject.sender.id)
+                                        else:
+                                            cek.Tambah()
+                                            chatObject.chat.send_message(f"Saya Telah Memperingati Anda Sebanyak : {cek.count()}")
+                            if TextObject.content.split()[0] in FullCommand:
+                                executor.submit(replyCommand, (TextObject),(chatObject.chat))
+                            elif '@g.us' != TextObject.chat_id:
+                                if '@c.us' in TextObject.chat_id:
+                                    TextObject.reply_message(chatbot(TextObject.content))
+                        elif TextObject.type == 'image':
+                            executor.submit(recImageReplyCommand, (TextObject),(chatObject.chat))
+                        elif TextObject.type == 'vcard':
+                            if isAdmin(chatObject.chat.id):
+                                masuk='SELAMAT DATANG :\n'
+                                for i in TextObject.contacts:
+                                    for u in re.findall('waid\=(.*?):',i.decode()):
+                                        try:
+                                            chatObject.chat.add_participant_group('%s@c.us'%(u))
+                                            masuk+='-@%s'%(u)
+                                        except Exception:
+                                            TextObject.reply_message('Menambahkan %s Sukses'%(u))
                                 driver.wapi_functions.sendMessageWithMentions(chatObject.chat.id,masuk,'')
-                            except selenium.common.exceptions.InvalidSessionIdException:
-                                False    
+            except Exception:#selenium.common.exceptions.InvalidSessionIdException:
+                pass    
 def recImageReplyCommand(Msg, Chat):
     caption = Msg.caption
     args=caption.split()[1:]
@@ -110,6 +111,21 @@ def recImageReplyCommand(Msg, Chat):
             res=WhatAnimeIsThis(fn)
             driver.wapi_functions.sendImage(convert_to_base64(BytesIO(res["video"].content)), Msg.chat_id, "wait.mp4", res["hasil"]) if res["status"] else Msg.reply_message("Gagal di cari")
             os.remove(fn)
+        elif kpt == "#quote1":
+            arg=caption[8:].split('|')
+            for i in range(arg.count('')):
+                arg.remove('')
+            print(arg)
+            if len(arg) == 3:
+                print("3333333")
+                color = (0, 0, 0) if arg[2] == "1" else (255, 255, 255)
+                fn=Msg.save_media("./cache",Msg.media_key)
+                print("key")
+                desain(fn, katakata=arg[0], author=arg[1], col=color)
+                print("desain")
+                driver.send_media(fn, Msg.chat_id, "Quote Berhasil Di Buat")
+                print("kirim")
+                os.remove(fn)
         elif kpt in ['#stiker','#sticker']:
             try:
                 fn=Msg.save_media('./cache',Msg.media_key)
@@ -160,6 +176,22 @@ Jumlah Post   : {userProperty["post"]}
                 Msg.reply_message("Nama Pengguna Tidak Ada ❌")
         else:
             Msg.reply_message("Masukan Nama Pengguna Yg Ingin Di Stalk")
+    elif kpt == "#quote1":
+        rep=GetRepMedia(Msg)
+        if rep.type == "image":
+            arg=chat[8:].split('|')
+            for i in range(arg.count('')):
+                arg.remove('')
+            print(arg)
+            print(len(arg))
+            if len(arg) == 3:
+                color = (0, 0, 0) if arg[2] == "1" else (255, 255, 255)
+                wri = driver.download_media(rep)
+                open("cache/%s.jpg"%ran,"wb").write(wri.read())
+                desain("cache/%s.jpg"%ran, katakata=arg[0], author=arg[1], col=color)
+                driver.send_media("cache/%s.jpg"%ran, chat_id, "Apakah Kamu Suka")
+            else:
+                Msg.reply_message("Perintah Salah")
     elif kpt == '#qrreader':
         rep=GetRepMedia(Msg)
         if rep.type == "image":
@@ -592,12 +624,15 @@ Tags :
             Msg.reply_message('title :%s\nsource: %s\n%s'%(hasil.title, hasil.url, hasil.content))
         except:
             Msg.reply_message('❌ YG Anda Cari Tidak Ada ❌')
-    elif chat.split('|')[0] == '#quotemaker':
+    elif kpt == '#quotemaker':
         '''
-        #quotemaker|<kata>|<author>|<kategori>
+        #quotemaker |<kata>|<author>|<kategori>
         '''
         try:
-            arg=chat.split('|')[1:]
+            arg=chat[12:].split('|')
+            for i in range(arg.count('')):
+                arg.remove('')
+            print(arg)
             hasil=json.loads(requests.get('https://terhambar.com/aw/qts/?kata=%s&author=%s&tipe=%s', params={'kata':arg[0],'author':arg[1],'tipe':arg[2]}).text)
             driver.wapi_functions.sendImage(convert_to_base64(BytesIO(requests.get(hasil['result']).content)), chat_id,"quotes.jpg", "Apakah Kamu Suka ?") if hasil['status'] else Msg.reply_message('#quotemaker|<kata>|<author>|<kategori>')
         except:
