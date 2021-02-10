@@ -5,7 +5,7 @@ cffi==1.14.3
 chardet==3.0.4
 click==7.1.2
 convertapi==1.4.0
-cryptography==3.1.1
+cryptography==3.3.2
 decorator==4.4.2
 googlesearch-python==2020.0.2
 googletrans==3.0.0
