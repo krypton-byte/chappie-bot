@@ -24,7 +24,7 @@ imageio-ffmpeg==0.4.2
 moviepy==1.0.3
 numpy==1.19.2
 openwa==1.3.8
-Pillow==7.2.0
+Pillow==8.1.1
 proglog==0.1.9
 protobuf==3.13.0
 pycparser==2.20
