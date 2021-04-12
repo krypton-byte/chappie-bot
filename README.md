@@ -11,6 +11,12 @@ $ docker build .
 $ docker run --env PORT=8080 -p 8080:8080 <container_id>
 #you can deploy to herokuapp
 ```
+# Heroku
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/krypton-byte/chappie-bot/tree/master)
+<br>
+<br>
+<br>
+<br>
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/krypton-byte/chappie-bot/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Naereen/StrapDown.js.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/krypton-byte/chappie-bot/stargazers/)
 

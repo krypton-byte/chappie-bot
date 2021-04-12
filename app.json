@@ -1,0 +1,26 @@
+{
+    "name":"Krypton-Bot",
+    "description":"WHATSAPP BOT",
+    "stack":"container",
+    "repository":"https://github.com/krypton-byte/chappie-bot",
+    "keywords":[
+        "whatsapp-bot",
+        "web",
+        "Python",
+        "openwa",
+        "automate",
+        "youtube",
+        "krypton-byte",
+        "speechtotext",
+        "transcript",
+        "ocr",
+        "ytdl",
+        "sticker",
+        "tiktok-downloader"
+    ],
+    "env":{
+        "AUTHOR":{
+            "description":"OWNER ex: 6283172366463"
+        }
+    }
+}

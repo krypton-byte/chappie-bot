@@ -1,5 +1,6 @@
+import os
 proxy = {}
-author = ["6283172366463@c.us"]
+author = [os.environ.get("AUTHOR", "6283172366463")+"@c.us"]
 BotName = "Krypton-Bot" #profile_name
 prefix = "!"
 server = "http://sticker-database.herokuapp.com"
