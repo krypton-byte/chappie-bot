@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://avatars.githubusercontent.com/u/52121207" width="25%"><br>
+<img src="https://i.ibb.co/28tFkJm/2333398-removebg-preview.png" width="25%"><br>
 <img src="https://img.shields.io/badge/AUTHOR-KRYPTON--BYTE-brightgreen">
 </p>
 
