@@ -4,7 +4,13 @@ RUN set -ex; \
     apt-get install -y ffmpeg wkhtmltopdf tesseract-ocr-ind libleptonica-dev python3.7 libtesseract-dev libwebp6 libwebp-dev libwebpdemux2 libwebpmux3 python-zbar wget unzip iputils-ping python3-pip webp iputils-ping jp2a 
 RUN wget --no-check-certificate https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && dpkg -i google-chrome-stable_current_amd64.deb || apt -y -f install
-RUN wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip&& unzip chromedriver_linux64.zip -d /bin
+#ttyd requirements
+#RUN set -ex;\ 
+#    apt-get update;\
+#    apt-get install build-essential cmake git libjson-c-dev libwebsockets-dev fakeroot proot byobu neofetch ffmpeg neofetch vim nano nmap byobu nodejs npm ruby ruby-dev -y
+#RUN git clone https://github.com/tsl0922/ttyd.git
+#RUN cd ttyd && mkdir build && cd build && cmake .. && make && make install
+RUN wget https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip&& unzip chromedriver_linux64.zip -d /bin
 RUN mkdir /mywork
 COPY . /mywork
 WORKDIR /mywork
