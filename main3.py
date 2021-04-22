@@ -1374,7 +1374,7 @@ def get_qr(sid):
 
 @sio.on("server_", namespace="/about")
 def About(sid):
-    boot=time.time()-psutil.boot_time()
+    boot=time.time()-starttime
     me = driver.wapi_functions.getMe() if driver.is_logged_in() else {}
     sio.emit("percent", data={
         "boot_time":{"day":int(math.floor(boot/3600)/24),"hours":math.floor(boot/3600)%24, "minute":int(math.floor(boot/60)%60), "second":math.floor(boot%60)},
