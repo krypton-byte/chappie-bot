@@ -25,7 +25,7 @@ from pyzbar.pyzbar import decode
 from ast import literal_eval
 from gtts import gTTS
 from io import BytesIO
-import threading
+import threading, math, psutil
 #------------Module--------------#
 #----------------
 from lib2 import desain, EditR, cordIndo, QuoteTrans, scrapX, pinterest, findSurah, detect, SpeechToText, spam, tiktok, vidPinDownload, ListLang, langExecute, url2png, img2ascii, goimage, twettdownload, pitch, setDriver, setCountDown, parser_nuklir, nsearch, tiktok2
@@ -34,7 +34,7 @@ from libx import *
 from data import update_toxic, resert_toxic
 from setting import author,  BotName, proxy, MenuList, prefix
 from javascript.pitnah import FakeReply, hidetag
-from flask import Flask
+from flask import Flask, render_template
 import socketio, eventlet
 #-----------setting----------------------#
 wikipedia.set_lang('id')
@@ -1371,6 +1371,18 @@ def get_qr(sid):
         sio.emit("qr", data={"qr":driver.get_qr_plain()}, namespace="/login", room=sid)
     else:
         sio.emit("loged", data={"Logged":True}, namespace="/login", room=sid)
+
+@sio.on("server_", namespace="/about")
+def About(sid):
+    boot=time.time()-psutil.boot_time()
+    me = driver.wapi_functions.getMe() if driver.is_logged_in() else {}
+    sio.emit("percent", data={
+        "boot_time":{"day":int(math.floor(boot/3600)/24),"hours":math.floor(boot/3600)%24, "minute":int(math.floor(boot/60)%60), "second":math.floor(boot%60)},
+        "cpu_percent":f"{int(psutil.cpu_percent())}%",
+        "disk_percent":f"{int(psutil.virtual_memory().percent)}%",
+        "botname":me.get('pushname', "Krypton-Bot"),
+    }, room=sid,namespace="/about")
+
 import base64
 if __name__ == '__main__':
     """if "pickle.txt" in os.listdir("."):
@@ -1379,7 +1391,7 @@ if __name__ == '__main__':
     @app.route('/')
     def wahai():
         if driver.is_logged_in():
-            return "Anda Sudah Login"
+            return render_template("monitor.html", waurl=f"https://wa.me/{driver.wapi_functions.getMe()['wid'][:-5]}", image_data=base64.b64encode(driver.get_profile_pic_from_id(driver.wapi_functions.getMe()['wid'])).decode())
         else:
             try:
                 return f'<img src="data:image/png;base64,{driver.get_qr_base64()}"><input type="hidden" name="qr" value="{driver.get_qr_plain()}">'

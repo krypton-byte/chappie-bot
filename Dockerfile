@@ -17,7 +17,7 @@ WORKDIR /mywork
 ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN python3 -m pip install -r /mywork/docker_python_requirements.txt
-RUN python3 -m pip install luxand flask psutil pydrive lottie cairosvg googletrans==4.0.0-rc1
+RUN python3 -m pip install luxand flask psutil pydrive lottie cairosvg googletrans==4.0.0-rc1 psutil
 ENV TERM=xterm-256color
 RUN python3 -m pip install eventlet python-socketio socketio==0.2.1 socketIO-client==0.7.2 pydub rxpy3 pilgram
 RUN python3 -m pip install -U setuptools
