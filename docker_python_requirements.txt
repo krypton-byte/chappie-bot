@@ -77,7 +77,7 @@ sqlparse==0.2.4
 terminaltables==3.1.0
 toml==0.10.1
 tqdm==4.50.2
-urllib3==1.25.9
+urllib3==1.26.5
 wikipedia==1.4.0
 zipp
 tesserocr
