@@ -1,9 +1,9 @@
 import os
 proxy = {}
-author = [os.environ.get("AUTHOR", "6283172366463")+"@c.us"]
-BotName = "Krypton-Bot" #profile_name
-prefix = "!"
-server = "http://sticker-database.herokuapp.com"
+author = [os.environ.get("AUTHOR", "6283172366463").strip("@c.us")+"@c.us"]
+BotName = os.environ.get("botname","Krypton-Bot") #profile_name
+prefix = os.environ.get("prefix","!")
+server = os.environ.get("server","http://sticker-database.herokuapp.com")
 #server = "http://127.0.0.1:8000"
 MenuList=lambda prefix, BotNamex, author, name:f"""
 ─────「 {BotNamex} 」─────
