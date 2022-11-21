@@ -89,7 +89,7 @@ soupsieve==2.0.1
 speedtest-cli==2.1.2
 sqlparse==0.2.4
 tensorboard==1.14.0
-tensorflow==2.4.2
+tensorflow==2.9.3
 tensorflow-estimator==1.14.0
 terminaltables==3.1.0
 toml==0.10.1
